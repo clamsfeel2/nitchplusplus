@@ -28,6 +28,10 @@ I am also just learning.
 
 ### Building and Installation
 
+For those on Arch based systems, I have a [`PKGBUILD`](./install/PKGBUILD) available. 
+
+For everyone else:
+
 **Clone the repository and go into the new directory**
 
 ```sh

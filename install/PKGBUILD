@@ -10,7 +10,7 @@ license=('MIT')
 url="https://github.com/clamsfeel2/fetchplusplus"
 source=("git+https://github.com/clamsfeel2/fetchplusplus.git#commit=HEAD")
 makedepends=('gcc' 'cmake' 'ninja')
-sha256sums=('SKIP') # Add once everything is up and running
+sha256sums=('SKIP') # Skip since using latest commit
 
 prepare() {
 	mkdir -p "$srcdir/build"
