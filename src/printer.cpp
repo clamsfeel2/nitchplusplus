@@ -3,7 +3,6 @@
 #include "system-info.h"
 #include "icons.h"
 #include "colors.hpp"
-#include <ios>
 #include <sstream>
 
 // FIXME: Organize this printing method
