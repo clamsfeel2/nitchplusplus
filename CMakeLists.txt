@@ -38,7 +38,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE tomlplusplus::tomlplusplus)
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/.config/fetchplusplus/"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/assets/ascii.txt" "$ENV{HOME}/.config/fetchplusplus/.ascii.txt"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/.assets/ascii.txt" "$ENV{HOME}/.config/fetchplusplus/.ascii.txt"
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION /usr/bin)
