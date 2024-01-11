@@ -44,6 +44,7 @@ std::string SystemInfo::Exec(const char* command) {
 	return result;
 } // ends Exec()
 
+// 1.2 + 
 // TODO: Fix this logic so it shows correct amount of memory being used
 std::string SystemInfo::GetMemoryUsage() {
 	std::string line, totalMemory, availableMemory;
@@ -58,7 +59,7 @@ std::string SystemInfo::GetMemoryUsage() {
 		iss >> key >> value;
 		if(key == "MemTotal:") {
 			totalMemory = value;
-		} else if(key == "MemFree:") {
+		} else if(key == "MemAvailable:") {
 			availableMemory = value;
 		}
 	}
@@ -70,9 +71,10 @@ std::string SystemInfo::GetMemoryUsage() {
 
 	double totalMemoryGiB = std::stod(totalMemory) / (1024.0 * 1024.0);
 	double availableMemoryGiB = std::stod(availableMemory) / (1024.0 * 1024.0);
+	double result = totalMemoryGiB - availableMemoryGiB;
 	std::ostringstream outputStr;
 	outputStr.precision(2);
-	outputStr << std::fixed << availableMemoryGiB << " GiB | " << totalMemoryGiB << " GiB";
+	outputStr << std::fixed << result << " GiB | " << totalMemoryGiB << " GiB";
 
 	return outputStr.str();
 } // ends GetMemoryInfo()
