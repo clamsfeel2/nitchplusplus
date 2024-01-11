@@ -1,0 +1,40 @@
+# WORK IN PROGRESS
+
+# Maintainer: clamsfeel2 <yellowclam@proton.me>
+pkgname="fetchplusplus-git"
+pkgdesc="System information fetch tool written in C++"
+pkgver=0.1.0
+pkgrel=1
+arch=('x86_64')
+license=('MIT')
+url="https://github.com/clamsfeel2/fetchplusplus"
+source=("git+https://github.com/clamsfeel2/fetchplusplus.git#commit=HEAD")
+makedepends=('gcc' 'cmake' 'ninja')
+sha256sums=('SKIP') # Add once everything is up and running
+
+prepare() {
+	mkdir -p "$srcdir/build"
+	cd "$srcdir/build"
+	if [ ! -d "$srcdir/build" ]; then
+		echo "ERROR: unable to create build directory."
+		exit 1
+	fi
+}
+build() {
+# Setting the HOME env varaible to users $HOME dir explicitly for CMakeLists.txt file to operate correctly
+# Probably not the best way to do this, but for now...
+	export HOME="$(eval echo ~$USER)"
+	cd "$srcdir/build"
+	cmake -GNinja ../fetchplusplus && ninja
+}
+package() {
+# Install onto system
+	cd "$srcdir/build"
+	sudo ninja install
+# Some cleaning up in build dir so it is not cluttered
+# Not necessary
+	cd "$srcdir/.."
+	pwd
+	cp $srcdir/build/fetchpp .
+	rm -r fetchplusplus src 
+}

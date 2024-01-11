@@ -39,7 +39,7 @@ std::unordered_map<std::string, std::string> Logos::ReadAsciiArt(const std::stri
 		}
 		file.close();
 	} else {
-		std::cerr << "Error opening ASCII art file." << std::endl;
+		std::cerr << "Error opening ascii art file." << std::endl;
 	}
 	return asciiMap;
 } // ends ReadAsciiArt()
