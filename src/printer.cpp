@@ -29,7 +29,7 @@ void Printer::Print() {
 	}
 	if(icon.showHostname) { 
 	std::cout << "  │ " << C::YELLOW << icon.iconHname << C::NC;
-	std::cout <<	"  hname   │ " << C::YELLOW << si.hostname << std::endl;
+	std::cout <<	"  hname   │ " << C::YELLOW << si.hostname << C::NC << std::endl;
 	}
 	if(icon.showDistro) { 
 	std::cout << "  │ " << C::G << icon.iconDistro << C::NC;
