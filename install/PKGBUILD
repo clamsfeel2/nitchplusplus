@@ -30,11 +30,10 @@ build() {
 package() {
 # Install onto system
 	cd "$srcdir/build"
-	sudo ninja install
+	ninja
 # Some cleaning up in build dir so it is not cluttered
 # Not necessary
 	cd "$srcdir/.."
-	pwd
 	cp $srcdir/build/fetchpp .
 	rm -r fetchplusplus src 
 }
