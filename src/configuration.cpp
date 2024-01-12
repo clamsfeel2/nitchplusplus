@@ -29,8 +29,8 @@ std::string Configuration::GetConfigPath() {
 				ossString << errorMessage << parentPath;
 				const std::string finalMessage = ossString.str();
 				throw std::invalid_argument(finalMessage);
-			} // ends if
-		} // ends if
+			} 
+		} 
 
 		// Check if the config file exists, and create it if not
 		configFile = resultPath;
@@ -47,10 +47,10 @@ std::string Configuration::GetConfigPath() {
 		if(!std::filesystem::exists(defaultDirectory)) {
 			if(!std::filesystem::create_directories(defaultDirectory)) {
 				throw std::invalid_argument("Error: Could not create directory: " + defaultDirectory);
-			} // ends if
-		} // ends if
+			} 
+		} 
 		return configFilename;
-	} // ends if env set or not
+	}  
 } // ends GetConfigPath()
 
 // TODO: ADD VALIDATION TO MAKE SURE CONFIGURATION OPTIONS USER HAS PUT ARE LEGAL
@@ -92,7 +92,8 @@ size_t Configuration::ParseConfigFile() {
 	icon.showMemory = parser["modules"]["memory"][1].value_or(true);
 
 	icon.iconColors = parser["modules"]["colors"][0].value_or("");
-	icon.showColors = parser["modules"]["colors"][1].value_or(true);
+	icon.iconColorSwatches = (parser["modules"]["colors"][1] == "" ? "" : parser["modules"]["colors"][1].value_or("")); // shows dot for swatch if value in toml file is empty or absent
+	icon.showColors = parser["modules"]["colors"][2].value_or(true);
 
 	// Checking if all values are false to print nothing.
 	if(!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) {

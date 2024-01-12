@@ -14,6 +14,7 @@ struct Icons {
 	static std::string iconPkgs;
 	static std::string iconMemory;
 	static std::string iconColors;
+	static std::string iconColorSwatches;
 	
 	static bool showNothing;
 	static bool showUsername;

@@ -64,8 +64,8 @@ void Printer::Print() {
 } // ends Print()
 
 std::string Printer::PrintColors() {
-	std::string dot = "";
+	Icons icon;
 	std::ostringstream oss;
-	oss << dot << C::RED << " " << dot << C::YELLOW << " " << dot << C::G << " " << dot << C::BRIGHT_BLUE << " " << dot << C::BLUE << " " << dot << C::PURPLE << " " << dot << C::NC;
+	oss << icon.iconColorSwatches << C::RED << " " << icon.iconColorSwatches << C::YELLOW << " " << icon.iconColorSwatches << C::G << " " << icon.iconColorSwatches << C::BRIGHT_BLUE << " " << icon.iconColorSwatches << C::BLUE << " " << icon.iconColorSwatches << C::PURPLE << " " << icon.iconColorSwatches << C::NC;
 	return oss.str();
 } // ends PrintColors()

@@ -29,6 +29,7 @@ std::string Icons::iconDeWm = "";
 std::string Icons::iconPkgs = "󰏖";
 std::string Icons::iconMemory = "󰍛";
 std::string Icons::iconColors = "";
+std::string Icons::iconColorSwatches = "";
 
 bool Icons::showNothing = false;
 bool Icons::showUsername = true;

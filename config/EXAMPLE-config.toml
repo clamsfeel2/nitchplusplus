@@ -1,4 +1,4 @@
-[icons]
+[modules]
 # Change these to change the icon that shows next to each module
 # Anything more than 1 character long currently breaks output
 # The boolean value is telling fetchplusplus whether or not to show that module
@@ -11,11 +11,11 @@ shell = [ "", true ]
 dewm = [ "", true ]
 pkgs = [ "󰏖", true ]
 memory = [ "󰍛", true ]
-colors = [ "", true ]
+colors = [ "", "", true ] # The first icon changes the color icon within the modules section. The second changes what each swatch looks like.
 
 [general]
 show_ascii = true # Setting this to false will disable ascii in output
-ascii_distro = "default" # Choose which distro's ascii image to display
+ascii_distro = "" # Choose which distro's ascii image to display | either comment this line out or set it to empty string to show system ascii
 
 # Possible distros:
 # default (shows fetch++ image)
