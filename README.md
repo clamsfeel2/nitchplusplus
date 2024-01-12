@@ -89,6 +89,6 @@ In order to use the config file, put the [example config file](./config/EXAMPLE-
 I think it is well documented, please let me know if not.
 
 > [!WARNING]
-> Any symbol or text 2 or more characters will break the output.
+> Any symbol or text 2 or more characters will break the output. (Although this is not unlike `nitch`)
 > 
-> **will be fixed soon**
+> **BUT it will be fixed soon**
