@@ -24,7 +24,7 @@ I am also just learning.
 >
 > *Having a [`NerdFont`](https://github.com/ryanoasis/nerd-fonts) installed on your system is required to make the icons display.*
 
-`fetch++` relies on `cmake` and either `ninja` or `make` for compiling and building. These are the only two tools you will need installed on your system.
+`fetch++` relies on `g++`, `cmake`, and either `ninja` or `make` for compiling and building. These are the only two tools you will need installed on your system.
 
 ### Building and Installation
 
