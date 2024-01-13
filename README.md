@@ -82,15 +82,15 @@ To **not** display ascii art
 fetchpp --noascii
 ```
 
-To change the width of the box in the output
-
-**Value must be greater than or equal to 6**
-
-*It is not currently possible to adjust the padding for each row/column, yet... So, as of now, this feature is more gimmicky than anything. Still fun, I think.*
+Adjust the box width in the output
 
 ```sh
-fetchpp --width <positve integer>
+fetchpp --width [integer >= 6]
 ```
+
+**Note:** The value must be 6 or greater.
+
+Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
 
 ### Configuration
 
