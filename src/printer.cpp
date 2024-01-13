@@ -21,7 +21,7 @@ void Printer::Print() {
 	int width = Configuration::width;
 	int firstBar = width / 2 - 1;
 	int bar = width + firstBar;
-	// Lambda to repeat a string n times
+	// Lambda to repeat a string n times in order to add more _ when changing the width 
 	auto RepeatString = [&](const std::string& str, int n) { std::string result; for(int i = 0; i < n; i++) { result += str; } return result; };
 	// Output
 	std::cout << C::B_BLUE << (Configuration::showAscii ? si.logo : "") << C::NC << std::endl;
