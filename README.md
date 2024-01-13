@@ -85,10 +85,10 @@ fetchpp --noascii
 Adjust the box width in the output
 
 ```sh
-fetchpp --width [integer >= 6]
+fetchpp --width [integer >= 5]
 ```
 
-**Note:** The value must be 6 or greater.
+**Note:** The value must be 5 or greater.
 
 Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
 

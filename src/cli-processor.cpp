@@ -28,8 +28,8 @@ int CliProcessor::ProcessCliArgs(int argC, char** argV) {
 		} else {
 			Configuration::width = std::stoi(args.front());
 		}
-		if(std::stoi(args.front()) < 6) {
-			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 6 or else my display breaks :(";
+		if(std::stoi(args.front()) < 5) {
+			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 5 or else my display breaks :(";
 			throw std::invalid_argument(oss.str());
 		}
 		Configuration::width = std::stoi(args.front());

@@ -108,9 +108,9 @@ size_t Configuration::ParseConfigFile() {
 	}
 	if(!widthSupplied) { 
 		Configuration::width = parser["general"]["width"].value_or(6);
-		if(Configuration::width < 6) {
+		if(Configuration::width < 5) {
 			std::ostringstream oss;
-			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 6 or else my display breaks :(";
+			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 5 or else my display breaks :(";
 			throw std::invalid_argument(oss.str());
 		}
 	}

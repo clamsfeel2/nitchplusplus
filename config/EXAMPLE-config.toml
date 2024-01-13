@@ -16,7 +16,7 @@ colors = [ "", "", true ]     # The first icon changes the color icon with
 [general]
 show_ascii = true               # Setting this to false will disable ascii in output.
 width = 6                       # Change the width of the box. Cannot modify padding of each column/row, yet... So this is more of a gimmick if anything right now ha.
-                                # This value MUST be 6 or greater.
+                                # This value MUST be 5 or greater. 6 is default.
 ascii_distro = ""               # Choose which distro's ascii image to display | either comment this line out or set it to empty string to show system ascii.
 # Possible distros:
 # default (shows fetch++ image)
