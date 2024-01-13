@@ -97,8 +97,3 @@ Padding adjustment for each row/column is not currently supported, making this f
 In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `fetch++` will use `$HOME/.config/fetchplusplus/config.toml` as the path to your config file. However, you are able to change the path by setting `FETCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
 
 I think it is well documented, please let me know if not.
-
-> [!WARNING]
-> Any symbol or text 2 or more characters will break the output. *Although this is not unlike `nitch` and other sys fetch tools*
-> 
-> **BUT it will be fixed soon**
