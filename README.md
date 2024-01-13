@@ -24,9 +24,12 @@ I am also just learning.
 >
 > *Having a [`NerdFont`](https://github.com/ryanoasis/nerd-fonts) installed on your system is required to make the icons display.*
 
-`fetch++` relies on `g++`, `cmake`, and either `ninja` or `make` for compiling and building. These are the only two tools you will need installed on your system.
 
 ### Building and Installation
+
+**Dependencies**
+
+- `fetch++` relies on `g++`, `cmake`, and either `ninja` or `make` for compiling and building.
 
 For those on Arch based systems, I have a [`PKGBUILD`](./install/PKGBUILD) available. 
 
