@@ -11,7 +11,7 @@ shell = [ "", true ]
 dewm = [ "", true ]
 pkgs = [ "󰏖", true ]
 memory = [ "󰍛", true ]
-colors = [ "", "", true ]     # The first icon changes the color icon within the modules section. The second changes what each swatch looks like.
+colors = [ "", "", true ]     # The first icon changes the color icon within the modules section. The second changes the color swatch icon.
 
 [general]
 show_ascii = true               # Setting this to false will disable ascii in output.
