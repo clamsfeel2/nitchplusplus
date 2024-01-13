@@ -10,8 +10,10 @@
 #include <filesystem> // for std::filesystem
 #include <toml++/toml.hpp> // for tomlplusplus
 
-bool Configuration::noAscii = true;
+bool Configuration::showAscii = true;
+bool Configuration::widthSupplied = false;
 std::string Configuration::configFile = " ";
+int Configuration::width = 6;
 
 std::string Configuration::GetConfigPath() {
 	const char* envValue = std::getenv(envConfigFile.c_str());
@@ -101,14 +103,22 @@ size_t Configuration::ParseConfigFile() {
 	}
 
 	// General
-	// Checking bool keeping track of if --noascii was set so cli arg overwrites all
-	if(noAscii) { 
-		Configuration::noAscii = parser["general"]["show_ascii"].value_or(true);
+	if(showAscii) { 
+		Configuration::showAscii = parser["general"]["show_ascii"].value_or(false);
+	}
+	if(!widthSupplied) { 
+		Configuration::width = parser["general"]["width"].value_or(6);
+		if(Configuration::width < 6) {
+			std::ostringstream oss;
+			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 6 or else my display breaks :(";
+			throw std::invalid_argument(oss.str());
+		}
 	}
 	std::string tmp = parser["general"]["ascii_distro"].value_or("");
 	if(tmp.empty()) {
 		return 2;
 	} 
+
 	SystemInfo::logo = Logos::GetLogos(tmp);
 	return 0;
 } // ends ParseConfigFile()

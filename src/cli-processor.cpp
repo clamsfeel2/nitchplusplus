@@ -2,26 +2,39 @@
 #include "colors.hpp"
 #include <iostream>
 #include <sstream>
-#include <stack>
+#include <queue>
 
 int CliProcessor::ProcessCliArgs(int argC, char** argV) {
-	std::stack<std::string> args;
+	std::queue<std::string> args;
+	std::ostringstream oss;
 	for(int i = 1; i < argC; ++i) {
 		args.emplace(argV[i]);
 	} 
 	if(args.empty()) {
 		return 1;
 	}
-	std::string flag = args.top();
+	std::string flag = args.front();
 	args.pop();
 	if(flag == "-na" || flag == "--noascii") {
-		Configuration::noAscii = false;
+		Configuration::showAscii = false;
 		return 1;
 	} else if(flag == "-h" || flag == "--help") {
 		PrintHelp();
 		return 0;
+	} else if(flag == "-w" || flag == "--width") {
+		if(args.empty()) {
+			oss << C::B_RED << "ERROR: " << C::NC << "invalid number of arguments"<< std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
+			throw std::invalid_argument(oss.str());
+		} else {
+			Configuration::width = std::stoi(args.front());
+		}
+		if(std::stoi(args.front()) < 6) {
+			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 6 or else my display breaks :(";
+			throw std::invalid_argument(oss.str());
+		}
+		Configuration::width = std::stoi(args.front());
+		Configuration::widthSupplied = true;
 	} else {
-		std::ostringstream oss;
 		oss << C::B_RED << "ERROR: " << C::NC << "incorrect usage \"" << flag << "\"" << std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
 		throw std::invalid_argument(oss.str());
 	}

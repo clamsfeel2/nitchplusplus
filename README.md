@@ -82,6 +82,16 @@ To **not** display ascii art
 fetchpp --noascii
 ```
 
+To change the width of the box in the output
+
+**Value must be greater than or equal to 6**
+
+*It is not currently possible to adjust the padding for each row/column, yet... So, as of now, this feature is more gimmicky than anything. Still fun, I think.*
+
+```sh
+fetchpp --width <positve integer>
+```
+
 ### Configuration
 
 In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `fetch++` will use `$HOME/.config/fetchplusplus/config.toml` as the path to your config file. However, you are able to change the path by setting `FETCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
