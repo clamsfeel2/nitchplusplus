@@ -18,7 +18,7 @@ Because nitch has been unmaintained since 2022 and I think it was a neat project
 
 ### Support
 
-`fetch++` currently only supports the following Linux distributions, although I have not been able to test all of them. If any problems arise, please make an `issue`.
+`fetch++` currently supports the following Linux distributions, although I have not been able to test all of them. If any problems arise, please make an [issue](https://github.com/clamsfeel2/fetchplusplus/issues).
 
 - Ubuntu
 - Arch
