@@ -16,7 +16,27 @@ A rewrite of [`nitch`](https://github.com/ssleert/nitch) in C++ with some extra 
 
 Because nitch has been unmaintained since 2022 and I think it was a neat project.
 
-I am also just learning.
+### Support
+
+`fetch++` currently only supports the following Linux distributions, although I have not been able to test all of them. If any problems arise, please make an `issue`.
+
+- Ubuntu
+- Arch
+- EndeavourOS
+- Artix
+- Manjaro
+- Debian
+- Fedora
+- RedHat
+- Mint
+- PopOS!
+- Void
+- OpenSUSE
+- Gentoo
+- NixOS
+- Zorin
+- Slackware
+- CentOS
 
 ### Dependencies
 

@@ -74,14 +74,12 @@ void Printer::Print() {
 	}
 	if(icon.showColors) { 
 		if(icon.showUsername || icon.showHostname || icon.showDistro || icon.showKernel || icon.showUptime || icon.showShell || icon.showDeWm || icon.showPkg || icon.showMemory) {
-			// std::cout << "  ├────────────┤" << std::endl;
 			std::cout << "  ├" << std::setfill(' ') << RepeatString("──", width) << "┤" << std::endl;
 		}
 	std::cout << "  │ " << icon.iconColors
 		<< std::setw(firstBar) << " " << "colors" << std::setw((width % 2 == 0 ? bar - 2 : bar - 1)) << "│ " 
 		<< PrintColors() << std::endl;
 	}
-	// std::cout << "  ╰────────────╯" << std::endl;
 	std::cout << "  ╰" << std::setfill(' ') << RepeatString("──", width) << "╯" << std::endl;
 
 	} 
