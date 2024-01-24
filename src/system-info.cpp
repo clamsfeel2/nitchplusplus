@@ -44,8 +44,6 @@ std::string SystemInfo::Exec(const char* command) {
 	return result;
 } // ends Exec()
 
-// 1.2 + 
-// TODO: Fix this logic so it shows correct amount of memory being used
 std::string SystemInfo::GetMemoryUsage() {
 	std::string line, totalMemory, availableMemory;
 	std::ifstream meminfoFile("/proc/meminfo");

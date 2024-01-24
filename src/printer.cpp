@@ -5,7 +5,6 @@
 #include "colors.hpp"
 #include <sstream>
 #include <iomanip>
-#include <algorithm>
 
 // FIXME: Organize this printing method
 // TODO: Have it print diff color for diff distros
@@ -14,10 +13,7 @@ void Printer::Print() {
 	Configuration cfg;
 	Icons icon;
 	// Initalize all the values we need
-	if((cfg.ParseConfigFile() == 2)) {
-		si.Initialize(true);
-	}
-	si.Initialize(false);
+	(cfg.ParseConfigFile() == 2 ? si.Initialize(true) : si.Initialize(false));
 	int firstBar = Configuration::width / 2 - 1;
 	int bar = Configuration::width + firstBar;
 	// Lambda to repeat a string n times in order to add more _ when changing the Configuration::width 
@@ -80,7 +76,6 @@ void Printer::Print() {
 		<< PrintColors() << std::endl;
 	}
 	std::cout << "  ╰" << std::setfill(' ') << RepeatString("──", Configuration::width) << "╯" << std::endl;
-
 	} 
 } // ends Print()
 
