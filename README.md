@@ -108,6 +108,8 @@ To display ascii art of a different distro
 fetchpp --distro [distro name]
 ```
 
+*A list of valid distro name values can be found in the [example config file](./config/EXAMPLE-config.toml)*
+
 Adjust the box width in the output
 
 ```sh

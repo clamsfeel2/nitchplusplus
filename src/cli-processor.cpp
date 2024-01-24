@@ -54,8 +54,11 @@ int CliProcessor::PrintHelp() {
 	std::cout <<  "-na, --noascii" <<  C::NC  <<
 		std::endl << "     will run fetch++ without displaying ascii art." << std::endl;
 	std::cout << std::endl;
-	std::cout <<  "-h, --help" <<  C::NC  <<
-		std::endl << "     display help." << std::endl;
+	std::cout <<  "-d, --distro [distro name]" <<  C::NC  <<
+		std::endl << "     will display ascii art of specified distro." << std::endl;
+	std::cout << std::endl;
+	std::cout <<  "-w, --width [>=5]" <<  C::NC  <<
+		std::endl << "     will change the width of the output box with specified value." << std::endl;
 	std::cout << std::endl;
 	return 0;
 } // ends PrintHelp()
