@@ -102,6 +102,12 @@ To **not** display ascii art
 fetchpp --noascii
 ```
 
+To display ascii art of a different distro
+
+```sh
+fetchpp --distro [distro name]
+```
+
 Adjust the box width in the output
 
 ```sh

@@ -6,13 +6,14 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <stdexcept>
 #include <filesystem> // for std::filesystem
 #include <toml++/toml.hpp> // for tomlplusplus
 
 bool Configuration::showAscii = true;
 bool Configuration::widthSupplied = false;
 std::string Configuration::configFile = " ";
+std::string Configuration::tmpDistro = "";
+bool Configuration::distroSuppliedFromCli;
 int Configuration::width = 6;
 
 std::string Configuration::GetConfigPath() {
@@ -98,10 +99,7 @@ size_t Configuration::ParseConfigFile() {
 	icon.showColors = parser["modules"]["colors"][2].value_or(true);
 
 	// Checking if all values are false to print nothing.
-	if(!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) {
-		icon.showNothing = !icon.showNothing;
-	}
-
+	icon.showNothing = (!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) ? true : false;
 	// General
 	if(showAscii) { 
 		Configuration::showAscii = parser["general"]["show_ascii"].value_or(false);
@@ -115,10 +113,10 @@ size_t Configuration::ParseConfigFile() {
 		}
 	}
 	std::string tmp = parser["general"]["ascii_distro"].value_or("");
-	if(tmp.empty()) {
+	if(Configuration::distroSuppliedFromCli) {
+		SystemInfo::logo = Logos::GetLogos(tmpDistro);
+	} else { 
 		return 2;
-	} 
-
-	SystemInfo::logo = Logos::GetLogos(tmp);
+	}
 	return 0;
 } // ends ParseConfigFile()

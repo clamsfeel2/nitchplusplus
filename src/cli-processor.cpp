@@ -34,6 +34,15 @@ int CliProcessor::ProcessCliArgs(int argC, char** argV) {
 		}
 		Configuration::width = std::stoi(args.front());
 		Configuration::widthSupplied = true;
+	} else if(flag == "-d" || flag == "--distro") {
+		if(args.empty()) {
+			oss << C::B_RED << "ERROR: " << C::NC << "invalid number of arguments"<< std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
+			throw std::invalid_argument(oss.str());
+		} else {
+			Configuration::distroSuppliedFromCli = true;
+			Configuration::tmpDistro = args.front();
+		}
+
 	} else {
 		oss << C::B_RED << "ERROR: " << C::NC << "incorrect usage \"" << flag << "\"" << std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
 		throw std::invalid_argument(oss.str());
