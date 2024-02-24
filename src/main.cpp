@@ -1,4 +1,3 @@
-#include "system-info.h"
 #include "printer.h"
 #include "cli-processor.h"
 #include <stdexcept>

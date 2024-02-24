@@ -1,5 +1,4 @@
 #include "logos.h"
-#include "colors.hpp"
 #include "configuration.h"
 #include "system-info.h"
 #include "icons.h"

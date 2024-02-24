@@ -1,6 +1,6 @@
 #pragma once
-#include "system-info.h"
 #include <unordered_map>
+#include <string>
 
 struct Logos {
 	static std::string GetLogos(const std::string& id);

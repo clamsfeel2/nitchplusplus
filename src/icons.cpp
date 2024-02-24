@@ -1,23 +1,23 @@
 #include "icons.h"
 #include "system-info.h"
 
-	std::unordered_map<std::string, std::string> Icons::distroIconMap = {
-		{"ubuntu", ""},
-		{"arch", "󰣇"},
-		{"debian", ""},
-		{"fedora", ""},
-		{"mint", "󰣭"},
-		{"zorin", ""},
-		{"popos", ""},
-		{"manjaro", ""},
-		{"opensuse", ""},
-		{"centos", ""},
-		{"gentoo", ""},
-		{"endeavouros", ""},
-		{"artix", ""}, 
-		{"void", ""},
-		{"nixos", ""}
-	};
+std::unordered_map<std::string, std::string> Icons::distroIconMap = {
+	{"ubuntu", ""},
+	{"arch", "󰣇"},
+	{"debian", ""},
+	{"fedora", ""},
+	{"mint", "󰣭"},
+	{"zorin", ""},
+	{"popos", ""},
+	{"manjaro", ""},
+	{"opensuse", ""},
+	{"centos", ""},
+	{"gentoo", ""},
+	{"endeavouros", ""},
+	{"artix", ""}, 
+	{"void", ""},
+	{"nixos", ""}
+};
 std::string	Icons::iconUser = "";
 std::string Icons::iconHname = "";
 std::string Icons::iconKernel = "󰌢";
