@@ -34,7 +34,6 @@ std::string Configuration::GetConfigPath() {
 				throw std::invalid_argument(finalMessage);
 			} 
 		} 
-
 		// Check if the config file exists, and create it if not
 		configFile = resultPath;
 		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/fetchplusplus/config.toml";

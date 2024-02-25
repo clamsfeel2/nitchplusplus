@@ -27,7 +27,7 @@ std::unordered_map<std::string, std::string> Logos::ReadAsciiArt(const std::stri
 				continue;
 			}
 			// Check if the line starts with whitespace meaning art!!
-			if (std::isspace(line[0])) {
+			if(std::isspace(line[0])) {
 				asciiMap[key] += line + '\n';
 			} else {
 				key = line;

@@ -2,7 +2,7 @@
 #include "cli-processor.h"
 #include <stdexcept>
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 	try { 
 		if(!CliProcessor::ProcessCliArgs(argc, argv)) { 
 			return 0;	
