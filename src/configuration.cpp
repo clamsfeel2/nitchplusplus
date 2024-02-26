@@ -95,7 +95,6 @@ size_t Configuration::ParseConfigFile() {
 	icon.iconColors = parser["modules"]["colors"][0].value_or("");
 	icon.iconColorSwatches = (parser["modules"]["colors"][1] == "" ? "" : parser["modules"]["colors"][1].value_or("")); // shows dot for swatch if value in toml file is empty or absent
 	icon.showColors = parser["modules"]["colors"][2].value_or(true);
-
 	// Checking if all values are false to print nothing.
 	icon.showNothing = (!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) ? true : false;
 	// General
