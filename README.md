@@ -10,6 +10,8 @@
 
 A rewrite of [`nitch`](https://github.com/ssleert/nitch) in C++ with some extra features.
 
+*Currently takes 2 milliseconds to run on my machine.*
+
 </div>
 
 ### Why?
