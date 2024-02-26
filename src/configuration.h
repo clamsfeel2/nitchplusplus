@@ -1,16 +1,13 @@
+#pragma once
 #include <string>
 #include <iostream>
 #include <unordered_map>
 
 struct Configuration {
-	static std::string configFile;
-	static bool showAscii;
-	static bool distroSuppliedFromCli;
-	static std::string tmpDistro;
-	static bool widthSupplied;
+	static std::string configFile, tmpDistro, filename;
+	static bool showAscii, distroSuppliedFromCli, widthSupplied;
 	static int width;
-	std::string envConfigFile = "FETCHPP_CONFIG_FILE";
-	std::string filename;
+	constexpr static const char envConfigFile[] = "FETCHPP_CONFIG_FILE";
 	size_t ParseConfigFile();
 	std::string GetConfigPath();
 };

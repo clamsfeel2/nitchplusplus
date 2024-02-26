@@ -33,7 +33,9 @@ void SystemInfo::Initialize(bool getLogos) {
 std::string SystemInfo::Exec(const char* command) {
 	std::array<char, 128> buffer;
 	std::string result;
-	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command, "r"), pclose);
+	auto closePipe = [](FILE* file) { pclose(file); };
+	std::unique_ptr<FILE, decltype(closePipe)> pipe(popen(command, "r"), closePipe);
+
 	if(!pipe) {
 		throw std::runtime_error("Exec method failed!");
 	}
@@ -148,6 +150,7 @@ void SystemInfo::InitializeDistroID() {
 	}
 	inputFile.close();
 } // ends GetDistro()
+
 std::string SystemInfo::GetHostname() {
 	std::ifstream inputFile("/proc/sys/kernel/hostname");
 	if(!inputFile.is_open()) {

@@ -2,8 +2,8 @@
 #include "configuration.h"
 #include <string>
 
-struct CliProcessor {
-	static int PrintHelp();
-	static int ProcessCliArgs(int argC, char** argV);
+namespace CliProcessor {
+	constexpr const char* PrintHelp();
+	int ProcessCliArgs(int argC, char** argV);
 };
 

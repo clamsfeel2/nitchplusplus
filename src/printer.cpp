@@ -13,7 +13,7 @@ void Printer::Print() {
 	Configuration cfg;
 	Icons icon;
 	// Initalize all the values we need
-	(cfg.ParseConfigFile() == 2 ? si.Initialize(true) : si.Initialize(false));
+	(cfg.ParseConfigFile() == 1 ? si.Initialize(true) : si.Initialize(false));
 	int firstBar = Configuration::width / 2 - 1;
 	int bar = Configuration::width + firstBar;
 	// Lambda to repeat a string n times in order to add more _ when changing the Configuration::width 

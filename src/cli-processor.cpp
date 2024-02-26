@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <queue>
+#include <cctype>
 
 int CliProcessor::ProcessCliArgs(int argC, char** argV) {
 	std::queue<std::string> args;
@@ -19,17 +20,17 @@ int CliProcessor::ProcessCliArgs(int argC, char** argV) {
 		if(flag == "-na" || flag == "--noascii") {
 			Configuration::showAscii = false;
 		} else if(flag == "-h" || flag == "--help") {
-			PrintHelp();
+			std::cout << PrintHelp();
 			return 0;
 		} else if(flag == "-w" || flag == "--width") {
-			if(args.empty()) {
+			if(args.empty() || !isdigit(args.front()[0])) {
 				oss << C::B_RED << "ERROR: " << C::NC << "invalid number of arguments"<< std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
 				throw std::invalid_argument(oss.str());
 			} else {
 				Configuration::width = std::stoi(args.front());
 			}
 			if(std::stoi(args.front()) < 5) {
-				oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 5 or else my display breaks :(";
+				oss << C::B_RED << "ERROR: " << C::NC << "the width value MUST be greater than 5 or else my display breaks :(";
 				throw std::invalid_argument(oss.str());
 			}
 			Configuration::width = std::stoi(args.front());
@@ -44,7 +45,6 @@ int CliProcessor::ProcessCliArgs(int argC, char** argV) {
 				Configuration::tmpDistro = args.front();
 				args.pop();
 			}
-
 		} else {
 			oss << C::B_RED << "ERROR: " << C::NC << "incorrect usage \"" << flag << "\"" << std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
 			throw std::invalid_argument(oss.str());
@@ -53,16 +53,9 @@ int CliProcessor::ProcessCliArgs(int argC, char** argV) {
 	return 1;
 }
 
-int CliProcessor::PrintHelp() {
-	std::cout <<  "-na, --noascii" <<  C::NC  <<
-		std::endl << "     will run fetch++ without displaying ascii art." << std::endl;
-	std::cout << std::endl;
-	std::cout <<  "-d, --distro [distro name]" <<  C::NC  <<
-		std::endl << "     will display ascii art of specified distro." << std::endl;
-	std::cout << std::endl;
-	std::cout <<  "-w, --width [>=5]" <<  C::NC  <<
-		std::endl << "     will change the width of the output box with specified value." << std::endl;
-	std::cout << std::endl;
-	return 0;
+constexpr const char* CliProcessor::PrintHelp() {
+	return
+		"-na, --noascii" "\n     will run fetch++ without displaying ascii art.\n\n"
+		"-d, --distro [distro name]"  "\n     will display ascii art of specified distro.\n\n"
+		"-w, --width [>=5]"  "\n     will change the width of the output box with specified value.\n";
 } // ends PrintHelp()
-

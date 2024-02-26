@@ -17,7 +17,8 @@ bool Configuration::distroSuppliedFromCli;
 int Configuration::width = 6;
 
 std::string Configuration::GetConfigPath() {
-	const char* envValue = std::getenv(envConfigFile.c_str());
+	// const char* envValue = std::getenv(envConfigFile.c_str());
+	const char* envValue = std::getenv(envConfigFile);
 	// Check if the environment variable is set
 	if(envValue != nullptr) {
 		// If set -- set resultPath to env variable path
@@ -27,7 +28,7 @@ std::string Configuration::GetConfigPath() {
 		// Check if the directory exists in env path, and create it if not
 		if(!std::filesystem::exists(parentPath)) {
 			if(!std::filesystem::create_directories(parentPath)) {
-				const std::string errorMessage = "Error: Could not create config directory: ";
+				constexpr const char errorMessage[] = "Error: Could not create config directory: ";
 				std::ostringstream ossString;
 				ossString << errorMessage << parentPath;
 				const std::string finalMessage = ossString.str();
@@ -37,7 +38,6 @@ std::string Configuration::GetConfigPath() {
 		// Check if the config file exists, and create it if not
 		configFile = resultPath;
 		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/fetchplusplus/config.toml";
-
 		// Return resulting filename
 		return configFilePath;
 	} else {
@@ -55,12 +55,11 @@ std::string Configuration::GetConfigPath() {
 	}  
 } // ends GetConfigPath()
 
-// TODO: ADD VALIDATION TO MAKE SURE CONFIGURATION OPTIONS USER HAS PUT ARE LEGAL
 size_t Configuration::ParseConfigFile() {
 	Icons icon;
 	configFile = GetConfigPath();
 	if(!std::filesystem::exists(configFile)) {
-		return 2;
+		return 1;
 	}
 	// Parse toml file
 	toml::table parser = toml::parse_file(configFile);
@@ -115,7 +114,7 @@ size_t Configuration::ParseConfigFile() {
 	if(Configuration::distroSuppliedFromCli) {
 		SystemInfo::logo = Logos::GetLogos(tmpDistro);
 	} else { 
-		return 2;
+		return 1;
 	}
 	return 0;
 } // ends ParseConfigFile()
