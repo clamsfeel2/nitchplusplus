@@ -5,7 +5,7 @@
 
 std::string Logos::GetLogos(const std::string& id) {
 	// Get parent path of config file to get the ascii art and casting it to use parent_path()
-	std::string asciiFile = static_cast<std::filesystem::path>(Configuration::configFile).parent_path();
+	std::string asciiFile(static_cast<std::filesystem::path>(Configuration::configFile).parent_path());
 	asciiFile += "/.ascii.txt";
 	std::unordered_map<std::string, std::string> logos = Logos::ReadAsciiArt(asciiFile);
 	auto it = logos.find(id);
@@ -32,7 +32,7 @@ std::unordered_map<std::string, std::string> Logos::ReadAsciiArt(const std::stri
 			} else {
 				key = line;
 				// Read the next four lines as ascii art
-				for(int i = 0; i < 4 && std::getline(file, line); ++i) {
+				for(int i = 0; i < 4 && std::getline(file, line); i++) {
 					asciiMap[key] += line + '\n';
 				}
 			}

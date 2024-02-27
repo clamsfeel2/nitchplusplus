@@ -13,6 +13,7 @@ void Printer::Print() {
 	Configuration cfg;
 	Icons icon;
 	// Initalize all the values we need
+	si.InitializeDistroID();
 	(cfg.ParseConfigFile() == 1 ? si.Initialize(true) : si.Initialize(false));
 	int firstBar = Configuration::width / 2 - 1;
 	int bar = Configuration::width + firstBar;

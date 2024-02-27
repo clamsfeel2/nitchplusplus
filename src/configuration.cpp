@@ -17,8 +17,7 @@ bool Configuration::distroSuppliedFromCli;
 int Configuration::width = 6;
 
 std::string Configuration::GetConfigPath() {
-	// const char* envValue = std::getenv(envConfigFile.c_str());
-	const char* envValue = std::getenv(envConfigFile);
+	const char* envValue = std::getenv("FETCHPP_CONFIG_FILE");
 	// Check if the environment variable is set
 	if(envValue != nullptr) {
 		// If set -- set resultPath to env variable path
@@ -59,42 +58,42 @@ size_t Configuration::ParseConfigFile() {
 	Icons icon;
 	configFile = GetConfigPath();
 	if(!std::filesystem::exists(configFile)) {
+		icon.iconDistro = []() -> std::string { auto it = Icons::distroIconMap.find(SystemInfo::distroID); return (it != Icons::distroIconMap.end()) ? it->second : "󰻀"; }();
 		return 1;
 	}
 	// Parse toml file
 	toml::table parser = toml::parse_file(configFile);
-	// Icons
-	icon.iconUser = parser["modules"]["username"][0].value_or("");
+	icon.iconUser = parser["modules"]["username"][0].ref<std::string>().empty() ? "" : parser["modules"]["username"][0].ref<std::string>();
 	icon.showUsername = parser["modules"]["username"][1].value_or(true);
 
-	icon.iconHname = parser["modules"]["hostname"][0].value_or("");
+	icon.iconHname = parser["modules"]["hostname"][0].ref<std::string>().empty() ? "" : parser["modules"]["hostname"][0].ref<std::string>();
 	icon.showHostname = parser["modules"]["hostname"][1].value_or(true);
 
-	// Lambda uses distroID to find matching icon in distroIconMap and returns penguin if distro not found
-	icon.iconDistro = parser["modules"]["distro"][0].value_or([&]() -> std::string { auto it = Icons::distroIconMap.find(SystemInfo::distroID); return (it != Icons::distroIconMap.end()) ? it->second : "󰻀"; }());
+	icon.iconDistro = parser["modules"]["distro"][0].ref<std::string>().empty() ? [&]() -> std::string { auto it = Icons::distroIconMap.find(SystemInfo::distroID); return (it != Icons::distroIconMap.end()) ? it->second : "󰻀"; }() : parser["modules"]["distro"][0].ref<std::string>();
 	icon.showDistro = parser["modules"]["distro"][1].value_or(true);
 
-	icon.iconKernel = parser["modules"]["kernel"][0].value_or("󰌢");
+	icon.iconKernel = parser["modules"]["kernel"][0].ref<std::string>().empty() ? "󰌢" : parser["modules"]["kernel"][0].ref<std::string>();
 	icon.showKernel = parser["modules"]["kernel"][1].value_or(true);
 
-	icon.iconUptime = parser["modules"]["uptime"][0].value_or("");
+	icon.iconUptime = parser["modules"]["uptime"][0].ref<std::string>().empty() ? "" : parser["modules"]["uptime"][0].ref<std::string>();
 	icon.showUptime = parser["modules"]["uptime"][1].value_or(true);
 
-	icon.iconShell = parser["modules"]["shell"][0].value_or("");
+	icon.iconShell = parser["modules"]["shell"][0].ref<std::string>().empty() ? "" : parser["modules"]["shell"][0].ref<std::string>();
 	icon.showShell = parser["modules"]["shell"][1].value_or(true);
 
-	icon.iconDeWm = parser["modules"]["dewm"][0].value_or("");
+	icon.iconDeWm = parser["modules"]["dewm"][0].ref<std::string>().empty() ? "" : parser["modules"]["dewm"][0].ref<std::string>();
 	icon.showDeWm = parser["modules"]["dewm"][1].value_or(false);
 
-	icon.iconPkgs = parser["modules"]["pkgs"][0].value_or("󰏖");
+	icon.iconPkgs = parser["modules"]["pkgs"][0].ref<std::string>().empty() ? "󰏖" : parser["modules"]["pkgs"][0].ref<std::string>();
 	icon.showPkg = parser["modules"]["pkgs"][1].value_or(true);
 
-	icon.iconMemory = parser["modules"]["memory"][0].value_or("󰍛");
+	icon.iconMemory = parser["modules"]["memory"][0].ref<std::string>().empty() ? "󰍛" : parser["modules"]["memory"][0].ref<std::string>();
 	icon.showMemory = parser["modules"]["memory"][1].value_or(true);
 
-	icon.iconColors = parser["modules"]["colors"][0].value_or("");
-	icon.iconColorSwatches = (parser["modules"]["colors"][1] == "" ? "" : parser["modules"]["colors"][1].value_or("")); // shows dot for swatch if value in toml file is empty or absent
+	icon.iconColors = parser["modules"]["colors"][0].ref<std::string>().empty() ? "" : parser["modules"]["colors"][0].ref<std::string>();
+	icon.iconColorSwatches = parser["modules"]["colors"][1].ref<std::string>().empty() ? "" : parser["modules"]["colors"][1].ref<std::string>();
 	icon.showColors = parser["modules"]["colors"][2].value_or(true);
+
 	// Checking if all values are false to print nothing.
 	icon.showNothing = (!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) ? true : false;
 	// General

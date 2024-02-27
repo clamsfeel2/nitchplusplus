@@ -14,7 +14,6 @@ std::string SystemInfo::logo;
 
 void SystemInfo::Initialize(bool getLogos) {
 	Icons icon;
-	InitializeDistroID();
 	distro = (icon.showDistro ? GetDistro() : ""); // Uses /etc/os-release
 	hostname = (icon.showHostname ? GetHostname() : ""); // /proc/sys/kernel/hostname
 	kernel = (icon.showKernel ? GetKernel() : ""); // /proc/sys/kernel/osrelease
@@ -201,25 +200,13 @@ std::string SystemInfo::GetWindowManager() {
 } // ends GetWindowManager()
 
 std::string SystemInfo::GetShell() {
-	const char* s;
-	if((s = std::getenv("SHELL"))) {
-		shell = std::string(s);
-		size_t lastSlashIndex = std::string::npos;
-
-		for(size_t i = 0; i < shell.length(); ++i) {
-			if(shell.at(i) == '/') {
-				lastSlashIndex = i;
-			}
-		}
-		if(lastSlashIndex != std::string::npos) {
-			shell.erase(0, lastSlashIndex + 1);
-		}
-	}
-	if(!shell.empty()) {
-		return shell;
+	if(const char* shellEnv = std::getenv("SHELL")) {
+		shell = shellEnv;
+		size_t lastSlashIndex = shell.find_last_of('/');
+		return (lastSlashIndex == std::string::npos ? shell : shell.erase(0, lastSlashIndex + 1));
 	}
 	return "";
-} // ends GetShell()
+}
 
 std::string SystemInfo::GetUser() {
 	const char* u = std::getenv("USER");
@@ -257,9 +244,8 @@ int SystemInfo::GetPackagesByDistro() {
 		return -1;
 	}
 	try {
-		int directoryCount = 0;
+		unsigned int directoryCount = 0;
 		// Iterate over directory and count all sub-directories (pkgs)
-		// TODO: Find a way to make this O(1)
 		for(const auto& entry : std::filesystem::directory_iterator(packageDir)) {
 			if(std::filesystem::is_directory(entry.path())) {
 				directoryCount++;
