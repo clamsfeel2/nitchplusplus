@@ -1,5 +1,4 @@
 #include "icons.h"
-#include "system-info.h"
 
 std::unordered_map<std::string, std::string> Icons::distroIconMap = {
 	{"ubuntu", ""},

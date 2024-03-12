@@ -1,5 +1,4 @@
 #include "logos.h"
-#include "configuration.h"
 #include "system-info.h"
 #include "icons.h"
 #include <fstream>
@@ -13,14 +12,14 @@ std::string SystemInfo::distroID;
 std::string SystemInfo::logo;
 
 void SystemInfo::Initialize(bool getLogos) {
+	if(getLogos) { 
+		logo = Logos::GetLogos(SystemInfo::distroID); // logos.h
+	}
 	Icons icon;
 	distro = (icon.showDistro ? GetDistro() : ""); // Uses /etc/os-release
 	hostname = (icon.showHostname ? GetHostname() : ""); // /proc/sys/kernel/hostname
 	kernel = (icon.showKernel ? GetKernel() : ""); // /proc/sys/kernel/osrelease
 	shell = (icon.showShell ? GetShell() : ""); // SHELL env var
-	if(getLogos) { 
-		logo = Logos::GetLogos(SystemInfo::distroID); // logos.h
-	}
 	user = (icon.showUsername ? GetUser() : ""); // USER env var
 	packageCount = (icon.showPkg ? GetPackagesByDistro() : 0); // Each distros package dir in /var/*
 	uptime = (icon.showUptime ? GetUptime() : ""); // /proc/uptime

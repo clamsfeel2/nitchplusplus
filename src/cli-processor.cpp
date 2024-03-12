@@ -1,9 +1,11 @@
 #include "cli-processor.h"
+#include <configuration.h>
 #include "colors.hpp"
 #include <iostream>
 #include <sstream>
 #include <queue>
 #include <cctype>
+#include <algorithm>
 
 int CliProcessor::ProcessCliArgs(int argC, char* argV[]) {
 	std::queue<std::string> args;
@@ -38,6 +40,8 @@ int CliProcessor::ProcessCliArgs(int argC, char* argV[]) {
 				throw std::invalid_argument(oss.str());
 			} else {
 				Configuration::distroSuppliedFromCli = true;
+				std::transform(args.front().begin(), args.front().end(), args.front().begin(),
+						[](unsigned char c){ return std::tolower(c); });
 				Configuration::tmpDistro = args.front();
 				args.pop();
 			}

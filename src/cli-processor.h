@@ -1,5 +1,4 @@
 #pragma once
-#include "configuration.h"
 #include <string>
 
 namespace CliProcessor {
