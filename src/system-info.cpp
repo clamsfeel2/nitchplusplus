@@ -25,7 +25,6 @@ void SystemInfo::Initialize(bool getLogos) {
 	uptime = (icon.showUptime ? GetUptime() : ""); // /proc/uptime
 	memory = (icon.showMemory ? GetMemoryUsage() : ""); // /proc/meminfo
 	de = (icon.showDeWm ? GetDesktopEnv() : ""); // XDG_CURRENT_DESKTOP, CURRENT_DESKTOP, DE env vars
-	wm = (icon.showDeWm ? GetWindowManager() : ""); // XDG_SESSION_TYPE env var
 }
 
 std::string SystemInfo::Exec(const char* command) {
@@ -189,14 +188,6 @@ std::string SystemInfo::GetDesktopEnv() {
 	}
 	return "";
 } // ends GetDesktopEnv()
-
-std::string SystemInfo::GetWindowManager() {
-	const char* w;
-	if((w = std::getenv("XDG_SESSION_TYPE"))) {
-		return std::string(w);
-	}
-	return "";
-} // ends GetWindowManager()
 
 std::string SystemInfo::GetShell() {
 	if(const char* shellEnv = std::getenv("SHELL")) {

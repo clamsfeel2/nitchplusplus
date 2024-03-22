@@ -56,7 +56,7 @@ void Printer::Print() {
 	if(icon.showDeWm) { 
 	std::cout << "  │ " << C::G << icon.iconDeWm << C::NC;
 	std::cout << std::setw(firstBar) << " " << "de/wm" << std::setw((Configuration::width % 2 == 0 ? bar - 1 : bar)) << "│ " 
-		<< C::G << si.de << " | " << si.wm << C::NC << std::endl;
+		<< C::G << si.de << C::NC << std::endl;
 	}
 	if(icon.showPkg) { 
 	std::cout << "  │ " << C::RED << icon.iconPkgs << C::NC;
