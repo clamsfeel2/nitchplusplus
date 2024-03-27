@@ -1,5 +1,5 @@
 #include "cli-processor.h"
-#include <configuration.h>
+#include "configuration.h"
 #include "colors.hpp"
 #include <iostream>
 #include <sstream>
