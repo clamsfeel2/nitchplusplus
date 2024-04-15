@@ -110,6 +110,12 @@ To display ascii art of a different distro
 fetchpp --distro [distro name]
 ```
 
+To clear the screen before fetch++ is ran
+
+```sh
+fetchpp --clear
+```
+
 *A list of valid distro names can be found in the [example config file](./config/EXAMPLE-config.toml)*
 
 Adjust the box width in the output
