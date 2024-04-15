@@ -29,7 +29,9 @@ int CliProcessor::ProcessCliArgs(int argC, char* argV[]) {
 				oss << C::B_RED << "ERROR: " << C::NC << "the width value MUST be greater than 5 or else the display breaks :(";
 				throw std::invalid_argument(oss.str());
 			} else {
-				Configuration::width = std::stoi(args.front());
+				oss << C::B_RED << "WIDTH FLAG IS UNDER MAINTENANCE :(";
+				throw std::invalid_argument(oss.str());
+				// Configuration::width = std::stoi(args.front());
 			}
 			Configuration::width = std::stoi(args.front());
 			Configuration::widthSupplied = true;
@@ -45,6 +47,8 @@ int CliProcessor::ProcessCliArgs(int argC, char* argV[]) {
 				Configuration::tmpDistro = args.front();
 				args.pop();
 			}
+		} else if(flag == "-c" || flag == "--clear") {
+				std::cout << "\033c" << std::endl;
 		} else {
 			oss << C::B_RED << "ERROR: " << C::NC << "incorrect usage \"" << flag << "\"" << std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
 			throw std::invalid_argument(oss.str());
