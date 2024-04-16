@@ -3,56 +3,48 @@
 #include "colors.hpp"
 #include <iostream>
 #include <sstream>
+#include <cstring>
 #include <queue>
 #include <cctype>
 #include <algorithm>
 
-int CliProcessor::ProcessCliArgs(int argC, char* argV[]) {
-	std::queue<std::string> args;
-	for(int i = 1; i < argC; i++) {
-		args.emplace(argV[i]);
-	} 
-	while(!args.empty()) { 
-		std::ostringstream oss;
-		std::string flag(args.front());
-		args.pop();
-		if(flag == "-na" || flag == "--noascii") {
-			Configuration::showAscii = false;
-		} else if(flag == "-h" || flag == "--help") {
-			std::cout << PrintHelp();
-			return 0;
-		} else if(flag == "-w" || flag == "--width") {
-			if(args.empty() || !isdigit(args.front()[0])) {
-				oss << C::B_RED << "ERROR: " << C::NC << "invalid number of arguments"<< std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
-				throw std::invalid_argument(oss.str());
-			} else if(std::stoi(args.front()) < 5) {
-				oss << C::B_RED << "ERROR: " << C::NC << "the width value MUST be greater than 5 or else the display breaks :(";
-				throw std::invalid_argument(oss.str());
-			} else {
-				oss << C::B_RED << "WIDTH FLAG IS UNDER MAINTENANCE :(";
-				throw std::invalid_argument(oss.str());
-				// Configuration::width = std::stoi(args.front());
-			}
-			Configuration::width = std::stoi(args.front());
-			Configuration::widthSupplied = true;
-			args.pop();
-		} else if(flag == "-d" || flag == "--distro") {
-			if(args.empty()) {
-				oss << C::B_RED << "ERROR: " << C::NC << "invalid number of arguments"<< std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
-				throw std::invalid_argument(oss.str());
-			} else {
-				Configuration::distroSuppliedFromCli = true;
-				std::transform(args.front().begin(), args.front().end(), args.front().begin(),
-						[](unsigned char c){ return std::tolower(c); });
-				Configuration::tmpDistro = args.front();
-				args.pop();
-			}
-		} else if(flag == "-c" || flag == "--clear") {
+int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
+	std::ostringstream oss;
+	int opt;
+	while((opt = getopt_long(argc, argv, "nahw:cd:", long_options, NULL)) != -1) {
+		switch(opt) {
+			case 'n':
+				Configuration::showAscii = false;
+				break;
+			case 'h':
+				std::cout << PrintHelp();
+				return 0;
+			case 'w':
+				if(optarg == nullptr) {
+					oss << C::B_RED << "ERROR: " << C::NC << "Invalid number of arguments given.";
+					throw std::invalid_argument(oss.str());
+				}
+				if(!isdigit(*optarg) || std::stoi(optarg) < 5) {
+					oss << C::B_RED << "ERROR: " << C::NC << "Invalid width value.";
+					throw std::invalid_argument(oss.str());
+				}
+				Configuration::width = std::stoi(optarg);
+				Configuration::widthSupplied = true;
+				break;
+			case 'c':
 				std::cout << "\033c" << std::endl;
-		} else {
-			oss << C::B_RED << "ERROR: " << C::NC << "incorrect usage \"" << flag << "\"" << std::endl << C::B_WHITE << "Run 'fetchpp --help' to see a list of legal commands.";
-			throw std::invalid_argument(oss.str());
+				break;
+			case 'd':
+				Configuration::distroSuppliedFromCli = true;
+				std::transform(optarg, optarg + strlen(optarg), optarg,
+						[](unsigned char c) { return std::tolower(c); });
+				Configuration::tmpDistro = optarg;
+				break;
+			default:
+				oss << C::B_RED << "ERROR: " << C::NC << "Incorrect usage.";
+				throw std::invalid_argument(oss.str());
 		}
 	}
 	return 1;
 }
+
