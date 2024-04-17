@@ -1,6 +1,6 @@
 <div align="center">
 
-![fetch++-image](./.assets/fetch++.png)
+![fetch++-image](./.assets/fetchplusplus.png)
 
 </div>
 
