@@ -1,6 +1,6 @@
 <div align="center">
 
-![fetchplusplus-image](./.assets/fetchplusplus.png)
+![fetch++-image](./.assets/fetch++.png)
 
 </div>
 
@@ -20,7 +20,7 @@ Because nitch has been unmaintained since 2022 and I think it was a neat project
 
 ### Support
 
-`fetch++` currently supports the following Linux distributions, although I have not been able to test all of them. If any problems arise, please create an [issue](https://github.com/clamsfeel2/fetchplusplus/issues).
+`fetch++` currently supports the following Linux distributions, although I have not been able to test all of them. If any problems arise, please create an [issue](https://github.com/clamsfeel2/fetch++/issues).
 
 - Ubuntu
 - Arch
@@ -95,19 +95,19 @@ ninja uninstall
 Just run
 
 ```sh
-fetchpp
+fetch++
 ```
 
 To **not** display ascii art
 
 ```sh
-fetchpp --noascii
+fetch++ --noascii
 ```
 
 To display ascii art of a different distro
 
 ```sh
-fetchpp --distro [distro name]
+fetch++ --distro [distro name]
 ```
 
 *A list of valid distro names can be found in the [example config file](./config/EXAMPLE-config.toml)*
@@ -115,17 +115,17 @@ fetchpp --distro [distro name]
 To clear the screen before fetch++ is ran
 
 ```sh
-fetchpp --clear
+fetch++ --clear
 ```
 
 Adjust the box width in the output
 
 ```sh
-fetchpp --width [integer >= 5]
+fetch++ --width [integer >= 5]
 ```
 
 Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
 
 ### Configuration
 
-In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `fetch++` will use `$HOME/.config/fetchplusplus/config.toml` as the path to your config file. However, you are able to change the path by setting `FETCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
+In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `fetch++` will use `$HOME/.config/fetch++/config.toml` as the path to your config file. However, you are able to change the path by setting `FETCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 

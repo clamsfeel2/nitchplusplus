@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(fetchpp)
+project(fetch++)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual")
 # Enable building compile_commands.json for help with ycm
@@ -34,12 +34,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE src)
 # Link libraries to the release executable
 target_link_libraries(${PROJECT_NAME} PRIVATE tomlplusplus::tomlplusplus)
 
-# Copy ascii-art.txt to $HOME/.config/fetchplusplus/.ascii.txt
+# Copy ascii-art.txt to $HOME/.config/fetch++/.ascii.txt
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/.config/fetchplusplus/"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/.assets/ascii.txt" "$ENV{HOME}/.config/fetchplusplus/.ascii.txt"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/.config/fetch++/"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/.assets/ascii.txt" "$ENV{HOME}/.config/fetch++/.ascii.txt"
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION /usr/bin)
-add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -E remove /usr/bin/fetchplusplus)
+add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -E remove /usr/bin/fetch++)

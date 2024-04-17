@@ -36,12 +36,12 @@ std::string Configuration::GetConfigPath() {
 		} 
 		// Check if the config file exists, and create it if not
 		configFile = resultPath;
-		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/fetchplusplus/config.toml";
+		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/fetch++/config.toml";
 		// Return resulting filename
 		return configFilePath;
 	} else {
 		// If env var not set -- create directory at $HOME/.config/tinytask
-		std::string defaultDirectory = std::string(std::getenv("HOME")) + "/.config/fetchplusplus/";
+		std::string defaultDirectory = std::string(std::getenv("HOME")) + "/.config/fetch++/";
 		std::string configFilename = defaultDirectory + "config.toml";
 
 		// Check if the directory exists -- and create it if not
