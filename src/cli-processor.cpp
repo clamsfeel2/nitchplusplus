@@ -20,8 +20,8 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
 				std::cout << PrintHelp();
 				return 0;
 			case 'w':
-				oss << C::B_RED << "WIDTH FLAG IS UNAVAILABLE FOR RIGHT NOW.";
-				throw std::invalid_argument(oss.str());
+				// oss << C::B_RED << "WIDTH FLAG IS UNAVAILABLE FOR RIGHT NOW.";
+				// throw std::invalid_argument(oss.str());
 				if(optarg == nullptr) {
 					oss << C::B_RED << "ERROR: " << C::NC << "Invalid number of arguments given.";
 					throw std::invalid_argument(oss.str());
@@ -30,8 +30,8 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
 					oss << C::B_RED << "ERROR: " << C::NC << "Invalid width value.";
 					throw std::invalid_argument(oss.str());
 				}
-				// Configuration::width = std::stoi(optarg);
-				// Configuration::widthSupplied = true;
+				Configuration::width = std::stoi(optarg);
+				Configuration::widthSupplied = true;
 				break;
 			case 'c':
 				std::cout << "\033c" << std::endl;
