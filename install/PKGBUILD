@@ -1,14 +1,12 @@
-# WORK IN PROGRESS
-
 # Maintainer: clamsfeel2 <yellowclam@proton.me>
-pkgname="fetchplusplus-git"
+pkgname="nitch++-git"
 pkgdesc="System information fetch tool written in C++"
 pkgver=0.1.0
 pkgrel=1
 arch=('x86_64')
 license=('MIT')
-url="https://github.com/clamsfeel2/fetchplusplus"
-source=("git+https://github.com/clamsfeel2/fetchplusplus.git#commit=HEAD")
+url="https://github.com/clamsfeel2/nitchplusplus"
+source=("git+https://github.com/clamsfeel2/nitchplusplus.git#commit=HEAD")
 makedepends=('gcc' 'cmake' 'ninja')
 sha256sums=('SKIP') # Skip since using latest commit
 
@@ -25,7 +23,7 @@ build() {
 # Probably not the best way to do this, but for now...
 	export HOME="$(eval echo ~$USER)"
 	cd "$srcdir/build"
-	cmake -GNinja ../fetchplusplus && ninja
+	cmake -GNinja ../nitchplusplus && ninja
 }
 package() {
 # Install onto system
@@ -34,6 +32,8 @@ package() {
 # Some cleaning up in build dir so it is not cluttered
 # Not necessary
 	cd "$srcdir/.."
-	cp $srcdir/build/fetchpp .
-	rm -r fetchplusplus src 
+	cp $srcdir/build/nitch++ .
+	rm -r nitchplusplus src
+	# rm *.pkg.tar.zst
 }
+

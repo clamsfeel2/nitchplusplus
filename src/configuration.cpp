@@ -17,7 +17,7 @@ bool Configuration::distroSuppliedFromCli;
 int Configuration::width = 6;
 
 std::string Configuration::GetConfigPath() {
-	const char* envValue = std::getenv("FETCHPP_CONFIG_FILE");
+	const char* envValue = std::getenv("NITCHPP_CONFIG_FILE");
 	// Check if the environment variable is set
 	if(envValue != nullptr) {
 		// If set -- set resultPath to env variable path
@@ -36,12 +36,12 @@ std::string Configuration::GetConfigPath() {
 		} 
 		// Check if the config file exists, and create it if not
 		configFile = resultPath;
-		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/fetch++/config.toml";
+		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/nitch++/config.toml";
 		// Return resulting filename
 		return configFilePath;
 	} else {
 		// If env var not set -- create directory at $HOME/.config/tinytask
-		std::string defaultDirectory = std::string(std::getenv("HOME")) + "/.config/fetch++/";
+		std::string defaultDirectory = std::string(std::getenv("HOME")) + "/.config/nitch++/";
 		std::string configFilename = defaultDirectory + "config.toml";
 
 		// Check if the directory exists -- and create it if not

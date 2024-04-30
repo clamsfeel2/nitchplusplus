@@ -13,10 +13,10 @@ namespace CliProcessor {
 		{0, 0, 0, 0}
 	};
 	inline const char* PrintHelp() { return
-		"-n, --noascii" "\n     will run fetch++ without displaying ascii art.\n\n"
+		"-n, --noascii" "\n     will run nitch++ without displaying ascii art.\n\n"
 			"-d, --distro [distro name]"  "\n     will display ascii art of specified distro.\n\n"
 			"-w, --width [>=5]"  "\n     will change the width of the output box with specified value.\n\n"
-			"-c, --clear"  "\n     will clear the screen before running fetch++.\n";
+			"-c, --clear"  "\n     will clear the screen before running nitch++.\n";
 	}
 };
 
