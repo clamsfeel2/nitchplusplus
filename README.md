@@ -128,4 +128,4 @@ Padding adjustment for each row/column is not currently supported, making this f
 
 ### Configuration
 
-In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `nitch++` will use `$HOME/.config/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `FETCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
+In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `nitch++` will use `$HOME/.config/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
