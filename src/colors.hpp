@@ -4,6 +4,9 @@ namespace C {
 	// Reset Color
 	constexpr const char* NC  = "\033[0m";
 
+	// DIM
+	constexpr const char* DIM="\e[2m";
+
 	// White
 	constexpr const char* B_WHITE  = "\033[1;38m";
 	constexpr const char* CO_WHITE  = "\033[9;38m";
