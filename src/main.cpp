@@ -1,5 +1,5 @@
 #include "printer.h"
-#include "cli-processor.h"
+#include "cli_processor.h"
 #include <stdexcept>
 
 int main(int argc, char* argv[]) {

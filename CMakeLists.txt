@@ -21,9 +21,9 @@ file(GLOB SRC_FILES
     "src/colors.hpp" 
     "src/logos.cpp" "src/logos.h"
 	"src/icons.cpp" "src/icons.h"
-    "src/system-info.cpp" "src/system-info.h"	
+    "src/system_info.cpp" "src/system_info.h"	
     "src/configuration.cpp" "src/configuration.h"
-	"src/cli-processor.cpp" "src/cli-processor.h"
+	"src/cli_processor.cpp" "src/cli_processor.h"
 	"src/printer.cpp" "src/printer.h"
 )
 

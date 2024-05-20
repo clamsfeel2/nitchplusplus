@@ -1,6 +1,6 @@
 #include "printer.h"
 #include "configuration.h"
-#include "system-info.h"
+#include "system_info.h"
 #include "icons.h"
 #include "colors.hpp"
 #include <sstream>
