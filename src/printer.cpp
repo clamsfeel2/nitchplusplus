@@ -18,10 +18,10 @@ void Printer::Print() {
 	int firstBar = Configuration::width / 2 - 1;
 	bool addedWhiteSpace = false;
 	int bar = Configuration::width + firstBar;
-	auto RepeatString = [&](const std::string& str, int n) { std::string result; for(int i = 0; i < n; i++) { result += str; } return result; };
+	auto RepeatString = [&](std::string_view str, int n) { std::string result; for(int i = 0; i < n; i++) { result += str; } return result; };
 	// Have AddWhiteSpace commented until I fix it
-	// auto AddWhiteSpace = [&](const std::string& str, int n) { std::string result; for(size_t i = 0; i < str.size(); ++i) { result += str[i]; if(i != str.size() - 1 && n > 0) { result.append(n, ' '); addedWhiteSpace = true; } } return result; };
-	auto AddWhiteSpace = [&](const std::string& str, int n) { std::string result; for(size_t i = 0; i < str.size(); ++i) { result += str[i]; if(i != str.size() - 1 && n > 0) { addedWhiteSpace = true; } } return result; };
+	// auto AddWhiteSpace = [&](std::string_view str, int n) { std::string result; for(size_t i = 0; i < str.size(); ++i) { result += str[i]; if(i != str.size() - 1 && n > 0) { result.append(n, ' '); addedWhiteSpace = true; } } return result; };
+	auto AddWhiteSpace = [&](std::string_view str, int n) { std::string result; for(size_t i = 0; i < str.size(); ++i) { result += str[i]; if(i != str.size() - 1 && n > 0) { addedWhiteSpace = true; } } return result; };
 	// Output
 	std::cout << C::B_BLUE << (Configuration::showAscii ? si.logo : "") << C::NC << std::endl;
 	if(!icon.showNothing) { 
