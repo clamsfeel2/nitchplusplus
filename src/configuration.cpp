@@ -3,8 +3,6 @@
 #include "colors.hpp"
 #include "icons.h"
 #include "logos.h"
-#include <iostream>
-#include <fstream>
 #include <sstream>
 #include <filesystem> // for std::filesystem
 #include <toml++/toml.hpp> // for tomlplusplus

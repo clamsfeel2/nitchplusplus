@@ -5,6 +5,7 @@
 #include "colors.hpp"
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 // FIXME: Organize this printing method
 // TODO: Have it print diff color for diff distros

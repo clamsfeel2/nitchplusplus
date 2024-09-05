@@ -1,6 +1,7 @@
 #include "printer.h"
 #include "cli_processor.h"
 #include <stdexcept>
+#include <iostream>
 
 int main(int argc, char* argv[]) {
 	try { 

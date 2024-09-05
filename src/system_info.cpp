@@ -5,7 +5,6 @@
 #include <iostream>
 #include <sstream>
 #include <filesystem>
-#include <unordered_map>
 #include <array>
 
 std::string SystemInfo::distroID;
@@ -102,51 +101,58 @@ std::string SystemInfo::GetUptime() {
 } // ends GetUptime()
 
 std::string SystemInfo::GetDistro() {
-	std::string key, value;
-	std::ifstream inputFile("/etc/os-release");
-	if(!inputFile.is_open()) {
-		return ""; 
-	}
-	std::string line;
-	while(std::getline(inputFile, line)) {
-		std::istringstream iss(line);
+    std::string key, value;
+    std::ifstream inputFile("/etc/os-release");
+    if(!inputFile.is_open()) {
+        return "";
+    }
+    std::string line;
+    while(std::getline(inputFile, line)) {
+        std::istringstream iss(line);
 
-		if(std::getline(iss, key, '=') && std::getline(iss, value)) {
-			// Removing double quotes from distro name
-			std::string result;
-			for(char character : value) {
-				if(character != '\"') {
-					result += character;
-				}
-			}
-			// Getting distros "Pretty Name" 
-			if(key == "PRETTY_NAME") {
-				distro = result;
-			}
-		}
-	}
-	inputFile.close();
-	return distro; 
-} // ends GetDistro()
+        if(std::getline(iss, key, '=') && std::getline(iss, value)) {
+            if(!value.empty() && value.front() == '\"') {
+                value.erase(0, 1);
+            }
+            if(!value.empty() && value.back() == '\"') {
+                value.pop_back();
+            }
 
-// Retreiving the ID value form /etc/os-release
+            if(key == "PRETTY_NAME") {
+                return value;
+            }
+        }
+    }
+    inputFile.close();
+    return "";
+}
+
+// // Retreiving the ID value form /etc/os-release
 void SystemInfo::InitializeDistroID() {
-	std::string key, value, result;
-	std::ifstream inputFile("/etc/os-release");
-	if(!inputFile.is_open()) {
-		return;
-	}
-	std::string line;
-	while(std::getline(inputFile, line)) {
-		std::istringstream iss(line);
-		if(std::getline(iss, key, '=') && std::getline(iss, value)) {
-			if(key == "ID") {
-				SystemInfo::distroID = value;
-			}
-		}
-	}
-	inputFile.close();
-} // ends GetDistro()
+    std::ifstream inputFile("/etc/os-release");
+    if(!inputFile.is_open()) {
+        return;
+    }
+    std::string line;
+    while(std::getline(inputFile, line)) {
+        std::istringstream iss(line);
+        std::string key, value;
+
+        if(std::getline(iss, key, '=') && std::getline(iss, value)) {
+            if(key == "ID") {
+                if(!value.empty() && value.front() == '\"') {
+                    value.erase(0, 1);
+                }
+                if(!value.empty() && value.back() == '\"') {
+                    value.pop_back();
+                }
+                SystemInfo::distroID = value;
+                break;
+            }
+        }
+    }
+    inputFile.close();
+}
 
 std::string SystemInfo::GetHostname() {
 	std::ifstream inputFile("/proc/sys/kernel/hostname");

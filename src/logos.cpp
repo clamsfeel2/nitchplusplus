@@ -1,5 +1,6 @@
 #include "logos.h"
 #include "configuration.h"
+#include <iostream>
 #include <fstream>
 #include <filesystem>
 
