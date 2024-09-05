@@ -110,7 +110,7 @@ To display ascii art of a different distro
 nitch++ --distro [distro name]
 ```
 
-*A list of valid distro names can be found in the [example config file](./config/EXAMPLE-config.toml)*
+*A list of valid distro names can be found in the [example config file](./config/EXAMPLE_config.toml)*
 
 To clear the screen before nitch++ is ran
 
@@ -128,4 +128,4 @@ Padding adjustment for each row/column is not currently supported, making this f
 
 ### Configuration
 
-In order to use the config file, put the [example config file](./config/EXAMPLE-config.toml) into the config directory. By default `nitch++` will use `$HOME/.config/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
+In order to use the config file, put the [example config file](./config/EXAMPLE_config.toml) into the config directory. By default `nitch++` will use `$HOME/.config/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
