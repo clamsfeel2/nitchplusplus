@@ -9,6 +9,7 @@
 
 bool Configuration::showAscii = true;
 bool Configuration::widthSupplied = false;
+bool Configuration::noNerdFonts = false;
 std::string Configuration::configFile = " ";
 std::string Configuration::tmpDistro = "";
 bool Configuration::distroSuppliedFromCli;
@@ -106,11 +107,25 @@ size_t Configuration::ParseConfigFile() {
 			throw std::invalid_argument(oss.str());
 		}
 	}
+	if(Configuration::noNerdFonts) {
+		icon.iconUser = ">";
+		icon.iconHname = ">";
+		icon.iconDistro = ">";
+		icon.iconKernel = ">";
+		icon.iconUptime = ">";
+		icon.iconShell = ">";
+		icon.iconDeWm = ">";
+		icon.iconPkgs = ">";
+		icon.iconMemory = ">";
+		icon.iconColors = "~";
+		icon.iconColorSwatches = "■";
+	}
 	std::string tmp = parser["general"]["ascii_distro"].value_or("");
 	if(Configuration::distroSuppliedFromCli) {
 		SystemInfo::logo = Logos::GetLogos(tmpDistro);
 	} else { 
 		return 1;
 	}
+
 	return 0;
 } // ends ParseConfigFile()

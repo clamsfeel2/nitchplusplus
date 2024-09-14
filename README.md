@@ -14,6 +14,15 @@ A rewrite of [`nitch`](https://github.com/ssleert/nitch) in C++ with some extra 
 
 </div>
 
+### Contents
+
+- [Why?](#why)
+- [Support](#support)
+- [Dependencies](#dependencies)
+- [Building and Installation](#building-and-installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+
 ### Why?
 
 Because nitch has been unmaintained since 2022 and I think it was a neat project.
@@ -98,6 +107,12 @@ Just run
 nitch++
 ```
 
+To **not** use [`NerdFonts`](https://github.com/ryanoasis/nerd-fonts).
+
+```sh
+nitch++ --nonerdfont
+```
+
 To **not** display ascii art
 
 ```sh
@@ -124,8 +139,27 @@ Adjust the box width in the output
 nitch++ --width [integer >= 5]
 ```
 
+Output of `nitch++ --help`
+
+```sh
+-a, --noascii
+     run nitch++ without displaying ascii art.
+
+-n, --nonerdfont
+     do not use nerd fonts.
+
+-d, --distro [distro name]
+     display ascii art of specified distro.
+
+-w, --width [>=5]
+     change the width of the output box with specified value.
+
+-c, --clear
+     clear the screen before running nitch++.
+```
+
 Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
 
 ### Configuration
 
-In order to use the config file, put the [example config file](./config/EXAMPLE_config.toml) into the config directory. By default `nitch++` will use `$HOME/.config/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
+In order to use the config file, put the [example config file](./config/EXAMPLE_config.toml) into the config directory. By default `nitch++` will use `$XDG_CONFIG_HOME/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 

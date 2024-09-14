@@ -13,6 +13,9 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
 	while((opt = getopt_long(argc, argv, "nahw:cd:", long_options, NULL)) != -1) {
 		switch(opt) {
 			case 'n':
+				Configuration::noNerdFonts = true;
+				break;
+			case 'a':
 				Configuration::showAscii = false;
 				break;
 			case 'h':
