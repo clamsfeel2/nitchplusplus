@@ -1,4 +1,4 @@
-# Maintainer: clamsfeel2 <yellowclam@proton.me>
+# Maintainer: clamsfeel2 <clamsfeel@proton.me>
 pkgname="nitch++-git"
 pkgdesc="System information fetch tool written in C++"
 pkgver=0.1.0
@@ -9,6 +9,7 @@ url="https://github.com/clamsfeel2/nitchplusplus"
 source=("git+https://github.com/clamsfeel2/nitchplusplus.git#commit=HEAD")
 makedepends=('gcc' 'cmake' 'ninja')
 sha256sums=('SKIP') # Skip since using latest commit
+validpgpkeys=(4FE361904964CAC3E1CE241D57A36E69AE3A6842)
 
 prepare() {
 	mkdir -p "$srcdir/build"
@@ -19,9 +20,6 @@ prepare() {
 	fi
 }
 build() {
-# Setting the HOME env varaible to users $HOME dir explicitly for CMakeLists.txt file to operate correctly
-# Probably not the best way to do this, but for now...
-	export HOME="$(eval echo ~$USER)"
 	cd "$srcdir/build"
 	cmake -GNinja ../nitchplusplus && ninja
 }
@@ -34,6 +32,4 @@ package() {
 	cd "$srcdir/.."
 	cp $srcdir/build/nitch++ .
 	rm -r nitchplusplus src
-	# rm *.pkg.tar.zst
 }
-
