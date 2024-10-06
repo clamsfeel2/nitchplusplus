@@ -95,7 +95,9 @@ std::string SystemInfo::GetUptime() {
 	int minutes = static_cast<int>(uptimeSeconds / 60);
 
 	std::ostringstream formattedUptime;
-	formattedUptime << days << "d " << hours << "h " << minutes << "m";
+	if(days > 0) formattedUptime << days << "d ";
+    if(hours > 0) formattedUptime << hours << "h ";
+    formattedUptime << minutes << "m";
 
 	return formattedUptime.str();
 } // ends GetUptime()
