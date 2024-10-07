@@ -139,6 +139,8 @@ Adjust the box width in the output
 nitch++ --width [integer >= 5]
 ```
 
+Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
+
 Output of `nitch++ --help`
 
 ```sh
@@ -157,8 +159,6 @@ Output of `nitch++ --help`
 -c, --clear
      clear the screen before running nitch++.
 ```
-
-Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
 
 ### Configuration
 
