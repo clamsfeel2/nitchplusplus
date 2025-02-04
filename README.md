@@ -29,7 +29,7 @@ Because nitch has been unmaintained since 2022 and I think it was a neat project
 
 ### Support
 
-`nitch++` currently supports the following Linux distributions, although I have not been able to test all of them. If any problems arise, please create an [issue](https://github.com/clamsfeel2/nitch++/issues).
+`nitch++` currently supports the following Linux distributions and macOS (mostly), although I have not been able to test all of them. If any problems arise, please create an [issue](https://github.com/clamsfeel2/nitch++/issues).
 
 - Ubuntu
 - Arch

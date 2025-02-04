@@ -3,8 +3,7 @@
 
 struct SystemInfo {
 	static std::string distroID, logo;
-	std::string distro, hostname, kernel, shell, user, uptime, memory, de;
-	int packageCount;
+	std::string distro, hostname, kernel, shell, user, uptime, memory, de, packageCount;
 
 	std::string Exec(const char* command);
 	void Initialize(bool getLogos);
@@ -16,6 +15,6 @@ struct SystemInfo {
 	std::string GetUptime();
 	std::string GetShell();
 	std::string GetDesktopEnv();
-	int GetPackagesByDistro();
+	std::string GetPackagesByDistro();
 	std::string GetMemoryUsage();
 };

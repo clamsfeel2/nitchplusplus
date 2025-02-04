@@ -43,7 +43,10 @@ void Printer::Print() {
 		if(icon.showKernel) { 
 			std::cout << "  │ " << C::BRIGHT_BLUE << icon.iconKernel << C::NC;
 			std::cout << std::setw(firstBar) << " " << AddWhiteSpace("kernel", Configuration::width - 6) << std::setw((Configuration::width % 2 == 0 ? bar - 2 : bar - 1)) << "│ " 
-				<< C::BRIGHT_BLUE << si.kernel << C::NC << std::endl;
+				<< C::BRIGHT_BLUE << si.kernel << C::NC;
+			if(SystemInfo::distroID != "macos") {
+				std::cout << std::endl;
+			}
 		}
 		if(icon.showUptime) {
 			std::cout << "  │ " << C::BLUE << icon.iconUptime << C::NC;

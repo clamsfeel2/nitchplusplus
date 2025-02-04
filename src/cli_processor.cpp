@@ -22,8 +22,6 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
 				std::cout << PrintHelp();
 				return 0;
 			case 'w':
-				// oss << C::B_RED << "WIDTH FLAG IS UNAVAILABLE FOR RIGHT NOW.";
-				// throw std::invalid_argument(oss.str());
 				if(optarg == nullptr) {
 					oss << C::B_RED << "ERROR: " << C::NC << "Invalid number of arguments given.";
 					throw std::invalid_argument(oss.str());
