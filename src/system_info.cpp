@@ -261,13 +261,10 @@ std::string SystemInfo::GetKernel() {
 
 std::string SystemInfo::GetDesktopEnv() {
 	#if defined(__APPLE__) && defined(__MACH__)
-		return "yabai";
+		return !system("pgrep -q yabai") ? "yabai" : "Aqua";
 	#else
-		const char* d;
-		if((d = std::getenv("XDG_CURRENT_DESKTOP")) || (d = std::getenv("DESKTOP_SESSION")) || (d = std::getenv("DE"))) {
-			return std::string(d);
-		}
-	return "";
+		const char* d = std::getenv("XDG_CURRENT_DESKTOP") ?: std::getenv("DESKTOP_SESSION") ?: std::getenv("DE");
+		return d ? std::string(d) : "";
 	#endif
 } // ends GetDesktopEnv()
 
@@ -275,18 +272,14 @@ std::string SystemInfo::GetShell() {
 	if(const char* shellEnv = std::getenv("SHELL")) {
 		shell = shellEnv;
 		size_t lastSlashIndex = shell.find_last_of('/');
-		return (lastSlashIndex == std::string::npos ? shell : shell.erase(0, lastSlashIndex + 1));
+		return lastSlashIndex == std::string::npos ? shell : shell.erase(0, lastSlashIndex + 1);
 	}
 	return "";
 }
 
 std::string SystemInfo::GetUser() {
 	const char* u = std::getenv("USER");
-	if(u != nullptr && *u != '\0') {
-		return std::string(u);
-	} else {
-		return "";
-	}
+	return (u && *u) ? std::string(u) : "";
 } // ends GetUser()
 
 std::string SystemInfo::GetPackagesByDistro() {
