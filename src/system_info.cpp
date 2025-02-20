@@ -82,11 +82,14 @@ std::string SystemInfo::GetMemoryUsage() {
             return "";
         }
 
-        std::string key, value;
-        while(getline(meminfoFile, key >> value)) {
-            if(key == "MemTotal:") totalMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
-            else if(key == "MemAvailable:") availableMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
-        }
+		std::string key, value;
+		while(getline(meminfoFile, key)) {
+			std::istringstream lineStream(key);
+			if(lineStream >> key >> value) {
+				if(key == "MemTotal:") totalMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
+				else if(key == "MemAvailable:") availableMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
+			}
+		}
         meminfoFile.close();
 
         if(totalMemoryGiB == 0.0 || availableMemoryGiB == 0.0) {
