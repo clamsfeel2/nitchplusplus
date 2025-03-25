@@ -5,7 +5,7 @@ namespace CliProcessor {
 	int ProcessCliArgs(int argC, char* argV[]);
 	inline struct option long_options[] = {
 		{"noascii", no_argument, 0, 'a'},
-		{"nonerdfont", no_argument, 0, 'n'},
+		{"nonerd", no_argument, 0, 'n'},
 		{"help", no_argument, 0, 'h'},
 		{"width", required_argument, 0, 'w'},
 		{"clear", no_argument, 0, 'c'},

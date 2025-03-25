@@ -5,4 +5,5 @@
 struct Logos {
 	static std::string GetLogos(const std::string& id);
 	static std::unordered_map<std::string, std::string> ReadAsciiArt(const std::string& filename);
+	static bool IsValidDistro(const std::string& distro);
 };

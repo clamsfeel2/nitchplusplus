@@ -110,7 +110,7 @@ nitch++
 To **not** use [`NerdFonts`](https://github.com/ryanoasis/nerd-fonts).
 
 ```sh
-nitch++ --nonerdfont
+nitch++ --nonerd
 ```
 
 To **not** display ascii art
@@ -147,7 +147,7 @@ Output of `nitch++ --help`
 -a, --noascii
      run nitch++ without displaying ascii art.
 
--n, --nonerdfont
+-n, --nonerd
      do not use nerd fonts.
 
 -d, --distro [distro name]

@@ -10,7 +10,7 @@
 bool Configuration::showAscii = true;
 bool Configuration::widthSupplied = false;
 bool Configuration::noNerdFonts = false;
-std::string Configuration::configFile = " ";
+std::string Configuration::configFile = "";
 std::string Configuration::tmpDistro = "";
 bool Configuration::distroSuppliedFromCli;
 int Configuration::width = 6;
