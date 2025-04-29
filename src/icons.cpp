@@ -1,21 +1,22 @@
 #include "icons.h"
 
 std::unordered_map<std::string, std::string> Icons::distroIconMap = {
-	{"ubuntu", ""},
-	{"arch", "󰣇"},
-	{"debian", ""},
-	{"fedora", ""},
-	{"mint", "󰣭"},
-	{"zorin", ""},
-	{"popos", ""},
-	{"manjaro", ""},
-	{"opensuse", ""},
-	{"centos", ""},
-	{"gentoo", ""},
-	{"endeavouros", ""},
-	{"artix", ""}, 
-	{"void", ""},
-	{"nixos", ""}
+    { "ubuntu",      ""    },
+    { "arch",        "󰣇"    },
+    { "debian",      ""    },
+    { "fedora",      ""    },
+    { "mint",        "󰣭"    },
+    { "zorin",       ""    },
+    { "popos",       ""    },
+    { "manjaro",     ""    },
+    { "opensuse",    ""    },
+    { "centos",      ""    },
+   { "gentoo",      ""    },
+   { "endeavouros", ""    },
+   { "artix",       ""    },
+   { "void",        ""    },
+   { "macos",       ""    },
+   { "nixos",       ""    }
 };
 std::string	Icons::iconUser("");
 std::string Icons::iconHname("");

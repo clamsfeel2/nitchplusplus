@@ -19,7 +19,7 @@ std::string SystemInfo::distroID;
 std::string SystemInfo::logo;
 
 void SystemInfo::Initialize(bool getLogos) {
-	if(getLogos) { 
+	if(getLogos) {
 		logo = Logos::GetLogos(SystemInfo::distroID); // logos.h
 	}
 	Icons icon;
@@ -259,7 +259,7 @@ std::string SystemInfo::GetKernel() {
 	while(std::getline(inputFile, line)) {
 		return line;
 	}
-	return ""; 
+	return "";
 } // ends GetKernel()
 
 std::string SystemInfo::GetDesktopEnv() {

@@ -3,7 +3,6 @@
 #include "colors.hpp"
 #include "icons.h"
 #include "logos.h"
-#include <sstream>
 #include <filesystem> // for std::filesystem
 #include <toml++/toml.hpp> // for tomlplusplus
 
@@ -16,116 +15,109 @@ bool Configuration::distroSuppliedFromCli;
 int Configuration::width = 6;
 
 std::string Configuration::GetConfigPath() {
-	const char* envValue = std::getenv("NITCHPP_CONFIG_FILE");
-	// Check if the environment variable is set
-	if(envValue != nullptr) {
-		// If set -- set resultPath to env variable path
-		std::string resultPath = std::string(envValue);
-		// Extract the parent path from the full file path and casting resultPath as filesystem type to use parent_path
-		std::filesystem::path parentPath = std::filesystem::path(resultPath).parent_path();
-		// Check if the directory exists in env path, and create it if not
-		if(!std::filesystem::exists(parentPath)) {
-			if(!std::filesystem::create_directories(parentPath)) {
-				constexpr const char errorMessage[] = "Error: Could not create config directory: ";
-				std::ostringstream ossString;
-				ossString << errorMessage << parentPath;
-				const std::string finalMessage = ossString.str();
-				throw std::invalid_argument(finalMessage);
-			}
-		}
-		// Check if the config file exists, and create it if not
-		configFile = resultPath;
-		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/nitch++/config.toml";
-		// Return resulting filename
-		return configFilePath;
-	} else {
-		// If env var not set -- create directory at $HOME/.config/tinytask
-		std::string defaultDirectory = std::string(std::getenv("HOME")) + "/.config/nitch++/";
-		std::string configFilename = defaultDirectory + "config.toml";
+    // Use either $NITCHPP_CONFIG_FILE or ~/.config/nitch++/config.toml
+    const char* env = std::getenv("NITCHPP_CONFIG_FILE");
+    std::filesystem::path configPath = env ? std::filesystem::path(env) : std::filesystem::path(std::getenv("HOME")) / ".config" / "nitch++" / "config.toml";
 
-		// Check if the directory exists -- and create it if not
-		if(!std::filesystem::exists(defaultDirectory)) {
-			if(!std::filesystem::create_directories(defaultDirectory)) {
-				throw std::invalid_argument("Error: Could not create directory: " + defaultDirectory);
-			}
-		}
-		return configFilename;
-	}
-} // ends GetConfigPath()
+    // Ensure the parent directory exists
+    std::error_code ec;
+    std::filesystem::create_directories(configPath.parent_path(), ec);
+    if(ec)
+        throw std::invalid_argument("Error: Could not create config directory: " + configPath.parent_path().string());
 
+    return configPath.string();
+}
+
+// FIXME when pkgs is false in config this throws a seg fault. WTF?!?!
 size_t Configuration::ParseConfigFile() {
-	Icons icon;
-	configFile = GetConfigPath();
-	if(!std::filesystem::exists(configFile)) {
-		icon.iconDistro = []() -> std::string { auto it = Icons::distroIconMap.find(SystemInfo::distroID); return (it != Icons::distroIconMap.end()) ? it->second : "󰻀"; }();
-		return 1;
-	}
-	// Parse toml file
-	toml::table parser = toml::parse_file(configFile);
-	icon.iconUser = parser["modules"]["username"][0].ref<std::string>().empty() ? "" : parser["modules"]["username"][0].ref<std::string>();
-	icon.showUsername = parser["modules"]["username"][1].value_or(true);
+    Icons icon;
+    configFile = GetConfigPath();
+    if(!std::filesystem::exists(configFile)) return 1;
 
-	icon.iconHname = parser["modules"]["hostname"][0].ref<std::string>().empty() ? "" : parser["modules"]["hostname"][0].ref<std::string>();
-	icon.showHostname = parser["modules"]["hostname"][1].value_or(true);
+    toml::table tbl = toml::parse_file(configFile);
+    auto modsPtr = tbl["modules"].as_table();
+    if(!modsPtr) throw std::invalid_argument("Missing [modules] section");
+    toml::table &mods = *modsPtr;
 
-	icon.iconDistro = parser["modules"]["distro"][0].ref<std::string>().empty() ? [&]() -> std::string { auto it = Icons::distroIconMap.find(SystemInfo::distroID); return (it != Icons::distroIconMap.end()) ? it->second : "󰻀"; }() : parser["modules"]["distro"][0].ref<std::string>();
-	icon.showDistro = parser["modules"]["distro"][1].value_or(true);
+    struct Spec {
+        const char*   name;
+        const char*   defIcon;
+        bool          defShow;
+        std::string*  outIcon;
+        bool*         outShow;
+    };
+    std::vector<Spec> specs = {
+        { "username", "", true,  &icon.iconUser,    &icon.showUsername },
+        { "hostname", "", true,  &icon.iconHname,   &icon.showHostname },
+        { "distro",   "󰻀", true,&icon.iconDistro,  &icon.showDistro     },
+        { "kernel",   "󰌢", true,  &icon.iconKernel,  &icon.showKernel   },
+        { "uptime",   "", true,  &icon.iconUptime,  &icon.showUptime   },
+        { "shell",    "", true,  &icon.iconShell,   &icon.showShell    },
+        { "dewm",     "", true, &icon.iconDeWm,    &icon.showDeWm      },
+        { "pkgs",     "󰏖", true,  &icon.iconPkgs,    &icon.showPkg      },
+        { "memory",   "󰍛", true,  &icon.iconMemory,  &icon.showMemory   }
+    };
 
-	icon.iconKernel = parser["modules"]["kernel"][0].ref<std::string>().empty() ? "󰌢" : parser["modules"]["kernel"][0].ref<std::string>();
-	icon.showKernel = parser["modules"]["kernel"][1].value_or(true);
+    auto distroFallback = [&]() -> std::string {
+        auto it = Icons::distroIconMap.find(SystemInfo::distroID);
+        return (it != Icons::distroIconMap.end()) ? it->second : "󰻀";
+    };
 
-	icon.iconUptime = parser["modules"]["uptime"][0].ref<std::string>().empty() ? "" : parser["modules"]["uptime"][0].ref<std::string>();
-	icon.showUptime = parser["modules"]["uptime"][1].value_or(true);
+    for(auto &s : specs) {
+        if(auto *arr = mods.at(s.name).as_array()) {
+            // Pull the raw first element (may be "")
+            std::string raw = arr->size() > 0 ? arr->at(0).value<std::string>().value_or("") : "";
 
-	icon.iconShell = parser["modules"]["shell"][0].ref<std::string>().empty() ? "" : parser["modules"]["shell"][0].ref<std::string>();
-	icon.showShell = parser["modules"]["shell"][1].value_or(true);
+            if(std::string(s.name) == "distro") {
+                // If empty use lambda to get icon if non-empty use what is in config
+                *s.outIcon = raw.empty() ? distroFallback() : raw;
+            } else {
+                // If empty use fallback if not use what is in config
+                *s.outIcon = raw.empty() ? s.defIcon : raw;
+            }
+            // Second element is always the show flag
+            *s.outShow = arr->size() > 1 ? arr->at(1).value<bool>().value_or(s.defShow) : s.defShow;
+        } else {
+            // Missing or not an array
+            *s.outIcon = s.defIcon;
+            *s.outShow = s.defShow;
+        }
+    }
 
-	icon.iconDeWm = parser["modules"]["dewm"][0].ref<std::string>().empty() ? "" : parser["modules"]["dewm"][0].ref<std::string>();
-	icon.showDeWm = parser["modules"]["dewm"][1].value_or(false);
+    if(auto *arr = mods.at("colors").as_array()) {
+        if(arr->size() < 3)
+            throw std::invalid_argument("modules.colors must be [icon,swatch,show]");
+        icon.iconColors        = arr->at(0).value<std::string>().value_or("");
+        icon.iconColorSwatches = arr->at(1).value<std::string>().value_or("");
+        icon.showColors        = arr->at(2).value<bool>().value_or(true);
+    } else {
+        // default fallback
+        icon.iconColors        = "";
+        icon.iconColorSwatches = "";
+        icon.showColors        = true;
+    }
 
-	icon.iconPkgs = parser["modules"]["pkgs"][0].ref<std::string>().empty() ? "󰏖" : parser["modules"]["pkgs"][0].ref<std::string>();
-	icon.showPkg = parser["modules"]["pkgs"][1].value_or(true);
+    icon.showNothing = std::all_of(specs.begin(), specs.end(), [&](auto &s){ return !*s.outShow; }) && !icon.showColors;
 
-	icon.iconMemory = parser["modules"]["memory"][0].ref<std::string>().empty() ? "󰍛" : parser["modules"]["memory"][0].ref<std::string>();
-	icon.showMemory = parser["modules"]["memory"][1].value_or(true);
+    // General settings
+    Configuration::showAscii = tbl["general"]["show_ascii"].value_or(Configuration::showAscii);
+    if(!widthSupplied) {
+        Configuration::width = tbl["general"]["width"].value_or(Configuration::width);
+        if(Configuration::width < 5) throw std::invalid_argument(C::B_RED + std::string("ERROR: ") + C::NC + "width in config must be >= 5");
+    }
 
-	icon.iconColors = parser["modules"]["colors"][0].ref<std::string>().empty() ? "" : parser["modules"]["colors"][0].ref<std::string>();
-	icon.iconColorSwatches = parser["modules"]["colors"][1].ref<std::string>().empty() ? "" : parser["modules"]["colors"][1].ref<std::string>();
-	icon.showColors = parser["modules"]["colors"][2].value_or(true);
+    if(Configuration::noNerdFonts) {
+        for(auto &s : specs) *s.outIcon = (std::string(s.name) == "colors" ? "~" : ">");
+        icon.iconColorSwatches = "■";
+    }
 
-	// Checking if all values are false to print nothing.
-	icon.showNothing = (!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) ? true : false;
-	// General
-	if(showAscii) {
-		Configuration::showAscii = parser["general"]["show_ascii"].value_or(false);
-	}
-	if(!widthSupplied) {
-		Configuration::width = parser["general"]["width"].value_or(6);
-		if(Configuration::width < 5) {
-			std::ostringstream oss;
-			oss << C::B_RED << "ERROR: " << C::NC << "width value in your config file MUST be greater than 5 or else my display breaks :(";
-			throw std::invalid_argument(oss.str());
-		}
-	}
-	if(Configuration::noNerdFonts) {
-		icon.iconUser = ">";
-		icon.iconHname = ">";
-		icon.iconDistro = ">";
-		icon.iconKernel = ">";
-		icon.iconUptime = ">";
-		icon.iconShell = ">";
-		icon.iconDeWm = ">";
-		icon.iconPkgs = ">";
-		icon.iconMemory = ">";
-		icon.iconColors = "~";
-		icon.iconColorSwatches = "■";
-	}
-	std::string tmp = parser["general"]["ascii_distro"].value_or("");
-	if(Configuration::distroSuppliedFromCli) {
-		SystemInfo::logo = Logos::GetLogos(tmpDistro);
-	} else {
-		return 1;
-	}
+    auto asciiDistro = tbl["general"]["ascii_distro"].value_or(std::string{});
+    if(Configuration::distroSuppliedFromCli || !asciiDistro.empty()) {
+        const auto &key = Configuration::distroSuppliedFromCli ? tmpDistro : asciiDistro;
+        SystemInfo::logo = Logos::GetLogos(key);
+        return 0;
+    }
 
-	return 0;
-} // ends ParseConfigFile()
+    return 1;
+}
+

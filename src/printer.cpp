@@ -41,7 +41,7 @@ void Printer::Print() {
         { icon.showUptime,   icon.iconUptime,  "uptime", si.uptime,       C::BLUE        },
         { icon.showShell,    icon.iconShell,   "shell",  si.shell,        C::PURPLE      },
         { icon.showDeWm,     icon.iconDeWm,    "de/wm",  si.de,           C::G           },
-        { icon.showPkg,      icon.iconPkgs,    "pkgs",   si.packageCount, C::RED },
+        { icon.showPkg,      icon.iconPkgs,    "pkgs",   si.packageCount, C::RED         },
         { icon.showMemory,   icon.iconMemory,  "memory", si.memory,       C::YELLOW      }
     };
 
