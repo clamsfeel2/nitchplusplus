@@ -31,8 +31,8 @@ std::string Configuration::GetConfigPath() {
 				ossString << errorMessage << parentPath;
 				const std::string finalMessage = ossString.str();
 				throw std::invalid_argument(finalMessage);
-			} 
-		} 
+			}
+		}
 		// Check if the config file exists, and create it if not
 		configFile = resultPath;
 		std::string configFilePath = std::string(std::getenv("HOME")) + "/.config/nitch++/config.toml";
@@ -47,10 +47,10 @@ std::string Configuration::GetConfigPath() {
 		if(!std::filesystem::exists(defaultDirectory)) {
 			if(!std::filesystem::create_directories(defaultDirectory)) {
 				throw std::invalid_argument("Error: Could not create directory: " + defaultDirectory);
-			} 
-		} 
+			}
+		}
 		return configFilename;
-	}  
+	}
 } // ends GetConfigPath()
 
 size_t Configuration::ParseConfigFile() {
@@ -96,10 +96,10 @@ size_t Configuration::ParseConfigFile() {
 	// Checking if all values are false to print nothing.
 	icon.showNothing = (!icon.showUsername && !icon.showHostname && !icon.showDistro && !icon.showKernel && !icon.showUptime && !icon.showShell && !icon.showDeWm && !icon.showPkg && !icon.showMemory && !icon.showColors) ? true : false;
 	// General
-	if(showAscii) { 
+	if(showAscii) {
 		Configuration::showAscii = parser["general"]["show_ascii"].value_or(false);
 	}
-	if(!widthSupplied) { 
+	if(!widthSupplied) {
 		Configuration::width = parser["general"]["width"].value_or(6);
 		if(Configuration::width < 5) {
 			std::ostringstream oss;
@@ -123,7 +123,7 @@ size_t Configuration::ParseConfigFile() {
 	std::string tmp = parser["general"]["ascii_distro"].value_or("");
 	if(Configuration::distroSuppliedFromCli) {
 		SystemInfo::logo = Logos::GetLogos(tmpDistro);
-	} else { 
+	} else {
 		return 1;
 	}
 

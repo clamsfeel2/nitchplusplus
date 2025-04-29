@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 project(nitch++)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual")
-# Enable building compile_commands.json for help with ycm
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Fetch and include tomlplusplus if not found
@@ -16,12 +15,12 @@ if(NOT tomlplusplus_FOUND)
     )
     FetchContent_MakeAvailable(tomlplusplus)
 endif()
-file(GLOB SRC_FILES 
-    "src/main.cpp" 
-    "src/colors.hpp" 
+file(GLOB SRC_FILES
+    "src/main.cpp"
+    "src/colors.hpp"
     "src/logos.cpp" "src/logos.h"
 	"src/icons.cpp" "src/icons.h"
-    "src/system_info.cpp" "src/system_info.h"	
+    "src/system_info.cpp" "src/system_info.h"
     "src/configuration.cpp" "src/configuration.h"
 	"src/cli_processor.cpp" "src/cli_processor.h"
 	"src/printer.cpp" "src/printer.h"
