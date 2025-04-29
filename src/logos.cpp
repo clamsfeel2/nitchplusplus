@@ -19,11 +19,10 @@ bool Logos::IsValidDistro(const std::string& id) {
 }
 
 std::string Logos::GetAsciiFilePath() {
-    if(!Configuration::configFile.empty())
-        return std::filesystem::path(Configuration::configFile).parent_path() / ".ascii.txt";
-    if(auto* home = std::getenv("HOME"))
-        return std::filesystem::path(home) / ".config" / "nitch++" / ".ascii.txt";
-    throw std::runtime_error("HOME environment variable is not set.");
+    if(!Configuration::configFile.empty()) return std::filesystem::path(Configuration::configFile).parent_path() / ".ascii.txt";
+    if(char* xdh = std::getenv("XDG_CONFIG_HOME")) return std::filesystem::path(xdh) / "nitch++" / ".ascii.txt";
+    if(char* home = std::getenv("HOME")) return std::filesystem::path(home) / ".config" / "nitch++" / ".ascii.txt";
+    throw std::runtime_error("Could not determine ascii path: HOME and XDG_CONFIG_HOME are both unset and no path found in config file.");
 }
 
 const std::unordered_map<std::string, std::string>& Logos::LoadAsciiArt() {

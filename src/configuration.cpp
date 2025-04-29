@@ -3,8 +3,8 @@
 #include "colors.hpp"
 #include "icons.h"
 #include "logos.h"
-#include <filesystem> // for std::filesystem
-#include <toml++/toml.hpp> // for tomlplusplus
+#include <filesystem>
+#include <toml++/toml.hpp>
 
 bool Configuration::showAscii = true;
 bool Configuration::widthSupplied = false;
@@ -35,9 +35,9 @@ size_t Configuration::ParseConfigFile() {
     if(!std::filesystem::exists(configFile)) return 1;
 
     toml::table tbl = toml::parse_file(configFile);
-    auto modsPtr = tbl["modules"].as_table();
+    toml::table* modsPtr = tbl["modules"].as_table();
     if(!modsPtr) throw std::invalid_argument("Missing [modules] section");
-    toml::table &mods = *modsPtr;
+    toml::table& mods = *modsPtr;
 
     struct Spec {
         const char*   name;
@@ -63,13 +63,13 @@ size_t Configuration::ParseConfigFile() {
         return (it != Icons::distroIconMap.end()) ? it->second : "󰻀";
     };
 
-    for(auto &s : specs) {
-        if(auto *arr = mods.at(s.name).as_array()) {
+    for(Spec& s : specs) {
+        if(toml::array* arr = mods.at(s.name).as_array()) {
             // Pull the raw first element (may be "")
             std::string raw = arr->size() > 0 ? arr->at(0).value<std::string>().value_or("") : "";
 
             if(std::string(s.name) == "distro") {
-                // If empty use lambda to get icon if non-empty use what is in config
+                // If distro use lambda to get icon if non-empty use what is in config
                 *s.outIcon = raw.empty() ? distroFallback() : raw;
             } else {
                 // If empty use fallback if not use what is in config
@@ -84,22 +84,16 @@ size_t Configuration::ParseConfigFile() {
         }
     }
 
-    if(auto *arr = mods.at("colors").as_array()) {
+    if(toml::array* arr = mods.at("colors").as_array()) {
         if(arr->size() < 3)
             throw std::invalid_argument("modules.colors must be [icon,swatch,show]");
         icon.iconColors        = arr->at(0).value<std::string>().value_or("");
         icon.iconColorSwatches = arr->at(1).value<std::string>().value_or("");
         icon.showColors        = arr->at(2).value<bool>().value_or(true);
-    } else {
-        // default fallback
-        icon.iconColors        = "";
-        icon.iconColorSwatches = "";
-        icon.showColors        = true;
     }
 
     icon.showNothing = std::all_of(specs.begin(), specs.end(), [&](auto &s){ return !*s.outShow; }) && !icon.showColors;
 
-    // General settings
     Configuration::showAscii = tbl["general"]["show_ascii"].value_or(Configuration::showAscii);
     if(!widthSupplied) {
         Configuration::width = tbl["general"]["width"].value_or(Configuration::width);
@@ -107,13 +101,13 @@ size_t Configuration::ParseConfigFile() {
     }
 
     if(Configuration::noNerdFonts) {
-        for(auto &s : specs) *s.outIcon = (std::string(s.name) == "colors" ? "~" : ">");
+        for(Spec& s : specs) *s.outIcon = (std::string(s.name) == "colors" ? "~" : ">");
         icon.iconColorSwatches = "■";
     }
 
     auto asciiDistro = tbl["general"]["ascii_distro"].value_or(std::string{});
     if(Configuration::distroSuppliedFromCli || !asciiDistro.empty()) {
-        const auto &key = Configuration::distroSuppliedFromCli ? tmpDistro : asciiDistro;
+        const std::string& key = Configuration::distroSuppliedFromCli ? tmpDistro : asciiDistro;
         SystemInfo::logo = Logos::GetLogos(key);
         return 0;
     }

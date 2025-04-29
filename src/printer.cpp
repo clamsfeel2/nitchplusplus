@@ -25,7 +25,7 @@ void Printer::Print() {
     si.Initialize(cfg.ParseConfigFile() == 1);
 
     // Helper to repeat a UTF-8 string
-    auto repeat       =[](std::string_view s,int n) -> std::string{ std::string o; for(; n--; ) o+=s; return o; };
+    auto repeat       =[](std::string_view s,int n) -> std::string { std::string o; for(; n--; ) o+=s; return o; };
     const int  width            = Configuration::width;
     const std::string dashLine = repeat("─", width + 5);
     bool anyPrinted             = false;
@@ -46,7 +46,7 @@ void Printer::Print() {
     };
 
     // Strip stray newlines
-    for(auto &r : rows)
+    for(Row& r : rows)
         if(!r.value.empty() && r.value.back() == '\n') r.value.pop_back();
 
     // Helper for every row
@@ -58,7 +58,7 @@ void Printer::Print() {
     };
 
     std::cout << "  ╭" << dashLine << "╮\n";
-    for(auto& r : rows)
+    for(Row& r : rows)
         anyPrinted |= printRow(r);
 
     // colors
@@ -74,7 +74,7 @@ std::string Printer::PrintColors() {
     Icons icon;
     std::ostringstream oss;
     constexpr const char* cols[] = { C::NC, C::RED, C::YELLOW, C::G, C::BRIGHT_BLUE, C::BLUE, C::PURPLE };
-    for(auto col : cols) oss << col << icon.iconColorSwatches << ' ';
+    for(const char* col : cols) oss << col << icon.iconColorSwatches << ' ';
     oss << C::NC;
     return oss.str();
 }
