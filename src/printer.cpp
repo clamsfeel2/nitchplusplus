@@ -27,7 +27,7 @@ void Printer::Print() {
     // Helper to repeat a UTF-8 string
     auto repeat       =[](std::string_view s,int n) -> std::string{ std::string o; for(; n--; ) o+=s; return o; };
     const int  width            = Configuration::width;
-    const std::string dashLine  = repeat("──", width);
+    const std::string dashLine = repeat("─", width + 5);
     bool anyPrinted             = false;
 
     if(Configuration::showAscii) std::cout << C::B_BLUE << si.logo << C::NC << "\n";
@@ -53,7 +53,7 @@ void Printer::Print() {
     auto printRow = [&](const Row& r) -> bool {
         if(!r.show) return false;
         auto padded = r.label + std::string(width - r.label.size(), ' ');
-        std::cout << "  │ " << r.color << r.icon << " " << C::NC << " " << padded << "  │ " << r.color << r.value << C::NC << "\n";
+        std::cout << "  │ " << r.color << r.icon << " " << C::NC << " " << padded << " │ " << r.color << r.value << C::NC << "\n";
         return true;
     };
 
@@ -65,7 +65,7 @@ void Printer::Print() {
     if(icon.showColors) {
         if(anyPrinted) std::cout << "  ├" << dashLine << "┤\n";
         std::string label = "colors";
-        std::cout << "  │ " << icon.iconColors << "  " << label << std::string(width - label.size(), ' ') << "  │ " << PrintColors() << "\n";
+        std::cout << "  │ " << icon.iconColors << "  " << label << std::string(width - label.size(), ' ') << " │ " << PrintColors() << "\n";
     }
     std::cout << "  ╰" << dashLine << "╯\n";
 }

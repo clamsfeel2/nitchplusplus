@@ -103,7 +103,7 @@ size_t Configuration::ParseConfigFile() {
     Configuration::showAscii = tbl["general"]["show_ascii"].value_or(Configuration::showAscii);
     if(!widthSupplied) {
         Configuration::width = tbl["general"]["width"].value_or(Configuration::width);
-        if(Configuration::width < 5) throw std::invalid_argument(C::B_RED + std::string("ERROR: ") + C::NC + "width in config must be >= 5");
+        if(Configuration::width < 6) throw std::invalid_argument(C::B_RED + std::string("ERROR: ") + C::NC + "width in config must be >= 5");
     }
 
     if(Configuration::noNerdFonts) {

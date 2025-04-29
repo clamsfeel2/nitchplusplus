@@ -14,7 +14,7 @@ namespace CliProcessor {
 	};
 	inline const char* PrintHelp() { return
 		"-a, --noascii" "\n     \e[2mrun nitch++ without displaying ascii art.\e[0m\n\n"
-			"-n, --nonerdfont"  "\n     \e[2mdo not use nerd fonts.\e[0m\n\n"
+			"-n, --nonerd"  "\n     \e[2mdo not use nerd fonts.\e[0m\n\n"
 			"-d, --distro [distro name]"  "\n     \e[2mdisplay ascii art of specified distro.\e[0m\n\n"
 			"-w, --width [>=5]"  "\n     \e[2mchange the width of the output box with specified value.\e[0m\n\n"
 			"-c, --clear"  "\n     \e[2mclear the screen before running nitch++.\e[0m\n";

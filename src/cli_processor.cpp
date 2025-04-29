@@ -2,60 +2,63 @@
 #include <iostream>
 #include <cctype>
 #include <algorithm>
-#include <sstream>
 #include "cli_processor.h"
 #include "configuration.h"
 #include "colors.hpp"
 #include "logos.h"
 
 int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
-    std::ostringstream oss;
-    int opt = 0;
+    auto error = [&](std::string_view msg){
+        throw std::invalid_argument(std::string(C::B_RED) + "ERROR: " + C::NC + msg.data());
+    };
+    auto to_lower = [](std::string& s){
+        std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::tolower(c); });
+    };
 
-    while((opt = getopt_long(argc, argv, "nahw:cd:", long_options, NULL)) != -1) {
-        switch(opt) {
+    int opt;
+    while((opt = getopt_long(argc, argv, "nahw:cd:", long_options, nullptr)) != -1) {
+        switch (opt) {
             case 'n':
                 Configuration::noNerdFonts = true;
                 break;
+
             case 'a':
                 Configuration::showAscii = false;
                 break;
+
             case 'h':
                 std::cout << PrintHelp();
                 return 0;
+
             case 'w': {
-                if(optarg == nullptr) {
-                    oss << C::B_RED << "ERROR: " << C::NC << "Invalid number of arguments given.";
-                    throw std::invalid_argument(oss.str());
-                }
-                if(!std::isdigit(optarg[0])) {
-                    oss << C::B_RED << "ERROR: " << C::NC << "Invalid width value.";
-                    throw std::invalid_argument(oss.str());
-                }
-                int width = std::stoi(optarg);
-                if(width < 5) {
-                    oss << C::B_RED << "ERROR: " << C::NC << "Invalid width value.";
-                    throw std::invalid_argument(oss.str());
-                }
-                Configuration::width = width;
+                const int MIN_WIDTH = 6;
+                if(!optarg || !std::isdigit(optarg[0]))
+                    error("Invalid width value.");
+                int w = std::stoi(optarg);
+                if(w < MIN_WIDTH)
+                    error("width must be >= " + std::to_string(MIN_WIDTH));
+                Configuration::width = w;
                 Configuration::widthSupplied = true;
                 break;
             }
+
             case 'c':
-                std::cout << "\033c" << std::endl;
+                std::cout << "\033c";
                 break;
-            case 'd':
+
+            case 'd': {
+                if(!optarg) error("Missing distro name.");
+                std::string d(optarg);
+                to_lower(d);
+                if(!Logos::IsValidDistro(d.c_str()))
+                    error("Distro not found.");
                 Configuration::distroSuppliedFromCli = true;
-                std::transform(optarg, optarg + strlen(optarg), optarg, [](unsigned char c) { return std::tolower(c); });
-				if(!Logos::IsValidDistro(optarg)) {
-					oss << C::B_RED << "ERROR: " << C::NC << "Distro not found.";
-                    throw std::invalid_argument(oss.str());
-				}
-                Configuration::tmpDistro = optarg;
+                Configuration::tmpDistro = std::move(d);
                 break;
+            }
+
             default:
-                oss << C::B_RED << "ERROR: " << C::NC << "Incorrect usage.";
-                throw std::invalid_argument(oss.str());
+                error("Incorrect usage.");
         }
     }
     return 1;
