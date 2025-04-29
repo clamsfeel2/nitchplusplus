@@ -1,9 +1,12 @@
 #pragma once
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
-struct Logos {
-	static std::string GetLogos(const std::string& id);
-	static std::unordered_map<std::string, std::string> ReadAsciiArt(const std::string& filename);
-	static bool IsValidDistro(const std::string& distro);
+class Logos {
+public:
+    static const std::string& GetLogos(const std::string& id);
+    static bool IsValidDistro(const std::string& id);
+private:
+    static const std::unordered_map<std::string, std::string>& LoadAsciiArt();
+    static std::string GetAsciiFilePath();
 };

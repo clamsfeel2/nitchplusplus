@@ -1,56 +1,50 @@
 #include "logos.h"
 #include "configuration.h"
-#include <iostream>
-#include <fstream>
 #include <filesystem>
-#include <unordered_map>
-#include <cctype>
+#include <fstream>
+#include <iostream>
 
-// Helper: determines the ascii art file path.
-static std::string GetAsciiFilePath() {
-    if(!Configuration::configFile.empty()) {
-        return std::filesystem::path(Configuration::configFile).parent_path().string() + "/.ascii.txt";
-    }
-	if(const char* home = std::getenv("HOME")) {
-		return std::filesystem::path(home) / ".config" / "nitch++" / ".ascii.txt";
-	}
+const std::string& Logos::GetLogos(const std::string& id) {
+    const std::unordered_map<std::string, std::string>& art = LoadAsciiArt();
+    auto it = art.find(id);
+    if(it != art.end()) return it->second;
+    static const std::string empty;
+    auto def = art.find("default");
+    return(def != art.end()) ? def->second : empty;
+}
+
+bool Logos::IsValidDistro(const std::string& id) {
+    const auto& art = LoadAsciiArt();
+    return art.find(id) != art.end();
+}
+
+std::string Logos::GetAsciiFilePath() {
+    if(!Configuration::configFile.empty())
+        return std::filesystem::path(Configuration::configFile).parent_path() / ".ascii.txt";
+    if(auto* home = std::getenv("HOME"))
+        return std::filesystem::path(home) / ".config" / "nitch++" / ".ascii.txt";
     throw std::runtime_error("HOME environment variable is not set.");
 }
 
-std::string Logos::GetLogos(const std::string& id) {
-    std::string asciiFile = GetAsciiFilePath();
-    auto logos = Logos::ReadAsciiArt(asciiFile);
-    auto it = logos.find(id);
-    return (it != logos.end()) ? it->second : logos["default"];
-}
-
-std::unordered_map<std::string, std::string> Logos::ReadAsciiArt(const std::string& filename) {
-    std::ifstream file(filename);
-    std::unordered_map<std::string, std::string> asciiMap;
-    if(file.is_open()) {
+const std::unordered_map<std::string, std::string>& Logos::LoadAsciiArt() {
+    static const auto artMap = []() {
+        std::unordered_map<std::string, std::string> m;
+        std::ifstream file(GetAsciiFilePath());
+        if(!file) {
+            std::cerr << "Could not open ASCII art file: " << GetAsciiFilePath() << std::endl;
+            return m;
+        }
         std::string line, key;
         while(std::getline(file, line)) {
-            if(line.empty())
-                continue;
-            if(std::isspace(line[0]))
-                asciiMap[key] += line + '\n';
-            else {
+            if(line.empty()) continue;
+            if(!std::isspace(static_cast<unsigned char>(line.front()))) {
                 key = line;
-                // Read the next four lines as ascii art.
-                for (int i = 0; i < 4 && std::getline(file, line); ++i)
-                    asciiMap[key] += line + '\n';
+                m[key].clear();
+            } else if(!key.empty()) {
+                m[key] += line + '\n';
             }
         }
-        file.close();
-    } else {
-        std::cerr << "Error opening ascii art file: " << filename << std::endl;
-    }
-    return asciiMap;
-}
-
-// New function: checks if the given distro exists in the ascii art file.
-bool Logos::IsValidDistro(const std::string& distro) {
-    std::string asciiFile = GetAsciiFilePath();
-    auto logos = Logos::ReadAsciiArt(asciiFile);
-    return logos.find(distro) != logos.end();
+        return m;
+    }();
+    return artMap;
 }
