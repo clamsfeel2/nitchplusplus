@@ -33,7 +33,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE src)
 # Link libraries to the release executable
 target_link_libraries(${PROJECT_NAME} PRIVATE tomlplusplus::tomlplusplus)
 
-# Copy ascii-art.txt to $HOME/.config/nitch++/.ascii.txt
+# Create config dir and copy ascii-art.txt to $HOME/.config/nitch++/.ascii.txt
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/.config/nitch++/"

@@ -35,9 +35,15 @@ std::string Configuration::GetConfigPath() {
 size_t Configuration::ParseConfigFile() {
     Icons icon;
     s_configFile = GetConfigPath();
-    if(!std::filesystem::exists(s_configFile)) return 1;
+    if(!std::filesystem::exists(s_configFile)) throw std::invalid_argument("Cannot find config file: '" + s_configFile + "'");
 
-    toml::table tbl = toml::parse_file(s_configFile);
+    toml::table tbl;
+    try {
+        tbl = toml::parse_file(s_configFile);
+    } catch(const toml::parse_error& e) {
+        throw std::invalid_argument("Failed to parse config file: '" + s_configFile + "'\nError: " + e.what());
+    }
+
     toml::table* modsPtr = tbl["modules"].as_table();
     if(!modsPtr) throw std::invalid_argument("Missing [modules] section");
     toml::table& mods = *modsPtr;
