@@ -2,7 +2,7 @@
 #include <string>
 
 struct SystemInfo {
-	static std::string distroID, logo;
+	static std::string s_distroID, s_logo;
 	std::string distro, hostname, kernel, shell, user, uptime, memory, de, packageCount;
 
 	std::string Exec(const char* command);

@@ -26,23 +26,23 @@ void Printer::Print() {
 
     // Helper to repeat a UTF-8 string
     auto repeat       =[](std::string_view s,int n) -> std::string { std::string o; for(; n--; ) o+=s; return o; };
-    const int  width            = Configuration::width;
+    const int  width            = Configuration::s_width;
     const std::string dashLine = repeat("─", width + 5);
     bool anyPrinted             = false;
 
-    if(Configuration::showAscii) std::cout << C::B_BLUE << si.logo << C::NC << "\n";
-    if(icon.showNothing) return;
+    if(Configuration::s_showAscii) std::cout << C::B_BLUE << si.s_logo << C::NC << "\n";
+    if(icon.s_showNothing) return;
 
     std::vector<Row> rows = {
-        { icon.showUsername, icon.iconUser,    "user",   si.user,         C::RED         },
-        { icon.showHostname, icon.iconHname,   "hname",  si.hostname,     C::YELLOW      },
-        { icon.showDistro,   icon.iconDistro,  "distro", si.distro,       C::G           },
-        { icon.showKernel,   icon.iconKernel,  "kernel", si.kernel,       C::BRIGHT_BLUE },
-        { icon.showUptime,   icon.iconUptime,  "uptime", si.uptime,       C::BLUE        },
-        { icon.showShell,    icon.iconShell,   "shell",  si.shell,        C::PURPLE      },
-        { icon.showDeWm,     icon.iconDeWm,    "de/wm",  si.de,           C::G           },
-        { icon.showPkg,      icon.iconPkgs,    "pkgs",   si.packageCount, C::RED         },
-        { icon.showMemory,   icon.iconMemory,  "memory", si.memory,       C::YELLOW      }
+        { icon.s_showUsername, icon.s_iconUser,    "user",   si.user,         C::RED         },
+        { icon.s_showHostname, icon.s_iconHname,   "hname",  si.hostname,     C::YELLOW      },
+        { icon.s_showDistro,   icon.s_iconDistro,  "distro", si.distro,       C::G           },
+        { icon.s_showKernel,   icon.s_iconKernel,  "kernel", si.kernel,       C::BRIGHT_BLUE },
+        { icon.s_showUptime,   icon.s_iconUptime,  "uptime", si.uptime,       C::BLUE        },
+        { icon.s_showShell,    icon.s_iconShell,   "shell",  si.shell,        C::PURPLE      },
+        { icon.s_showDeWm,     icon.s_iconDeWm,    "de/wm",  si.de,           C::G           },
+        { icon.s_showPkgs,      icon.s_iconPkgs,    "pkgs",   si.packageCount, C::RED         },
+        { icon.s_showMemory,   icon.s_iconMemory,  "memory", si.memory,       C::YELLOW      }
     };
 
     // Strip stray newlines
@@ -62,10 +62,10 @@ void Printer::Print() {
         anyPrinted |= printRow(r);
 
     // colors
-    if(icon.showColors) {
+    if(icon.s_showColors) {
         if(anyPrinted) std::cout << "  ├" << dashLine << "┤\n";
         std::string label = "colors";
-        std::cout << "  │ " << icon.iconColors << "  " << label << std::string(width - label.size(), ' ') << " │ " << PrintColors() << "\n";
+        std::cout << "  │ " << icon.s_iconColors << "  " << label << std::string(width - label.size(), ' ') << " │ " << PrintColors() << "\n";
     }
     std::cout << "  ╰" << dashLine << "╯\n";
 }
@@ -74,7 +74,7 @@ std::string Printer::PrintColors() {
     Icons icon;
     std::ostringstream oss;
     constexpr const char* cols[] = { C::NC, C::RED, C::YELLOW, C::G, C::BRIGHT_BLUE, C::BLUE, C::PURPLE };
-    for(const char* col : cols) oss << col << icon.iconColorSwatches << ' ';
+    for(const char* col : cols) oss << col << icon.s_iconColorSwatches << ' ';
     oss << C::NC;
     return oss.str();
 }

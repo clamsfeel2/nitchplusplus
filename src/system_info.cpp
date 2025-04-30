@@ -15,23 +15,21 @@
     #include <fstream>
 #endif
 
-std::string SystemInfo::distroID;
-std::string SystemInfo::logo;
+std::string SystemInfo::s_distroID;
+std::string SystemInfo::s_logo;
 
 void SystemInfo::Initialize(bool getLogos) {
-	if(getLogos) {
-		logo = Logos::GetLogos(SystemInfo::distroID); // logos.h
-	}
+	if(getLogos) s_logo = Logos::GetLogos(SystemInfo::s_distroID);
 	Icons icon;
-	distro = (icon.showDistro ? GetDistro() : ""); // Uses /etc/os-release
-	hostname = (icon.showHostname ? GetHostname() : ""); // /proc/sys/kernel/hostname
-	kernel = (icon.showKernel ? GetKernel() : ""); // /proc/sys/kernel/osrelease
-	shell = (icon.showShell ? GetShell() : ""); // SHELL env var
-	user = (icon.showUsername ? GetUser() : ""); // USER env var
-	packageCount = (icon.showPkg ? GetPackagesByDistro() : "0"); // Each distros package dir in /var/*
-	uptime = (icon.showUptime ? GetUptime() : ""); // /proc/uptime
-	memory = (icon.showMemory ? GetMemoryUsage() : ""); // /proc/meminfo
-	de = (icon.showDeWm ? GetDesktopEnv() : ""); // XDG_CURRENT_DESKTOP, CURRENT_DESKTOP, DE env vars, aqua for mac (prob not the best to hardcode it FIXME)
+	distro        = (icon.s_showDistro ? GetDistro() : "");          // Uses /etc/os-release
+	hostname      = (icon.s_showHostname ? GetHostname() : "");      // /proc/sys/kernel/hostname
+	kernel        = (icon.s_showKernel ? GetKernel() : "");          // /proc/sys/kernel/osrelease
+	shell         = (icon.s_showShell ? GetShell() : "");            // SHELL env var
+	user          = (icon.s_showUsername ? GetUser() : "");          // USER env var
+	packageCount  = (icon.s_showPkgs ? GetPackagesByDistro() : "0");  // Each distros package dir in /var/*
+	uptime        = (icon.s_showUptime ? GetUptime() : "");          // /proc/uptime
+	memory        = (icon.s_showMemory ? GetMemoryUsage() : "");     // /proc/meminfo
+	de            = (icon.s_showDeWm ? GetDesktopEnv() : "");        // XDG_CURRENT_DESKTOP, CURRENT_DESKTOP, DE env vars, aqua for mac (prob not the best to hardcode it... FIXME?)
 }
 
 std::string SystemInfo::Exec(const char* command) {
@@ -40,14 +38,11 @@ std::string SystemInfo::Exec(const char* command) {
 	auto closePipe = [](FILE* file) { pclose(file); };
 	std::unique_ptr<FILE, decltype(closePipe)> pipe(popen(command, "r"), closePipe);
 
-	if(!pipe) {
-		throw std::runtime_error("Exec method failed!");
-	}
-	while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-		result += buffer.data();
-	}
+	if(!pipe) throw std::runtime_error("Exec method failed!");
+	while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) result += buffer.data();
+
 	return result;
-} // ends Exec()
+}
 
 std::string SystemInfo::GetMemoryUsage() {
     double totalMemoryGiB = 0.0, availableMemoryGiB = 0.0;
@@ -63,15 +58,14 @@ std::string SystemInfo::GetMemoryUsage() {
         mach_port_t host_port = mach_host_self();
         vm_size_t page_size;
         mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-        vm_statistics64_data_t vm_stats;
+        vm_statistics64_data_t vstats;
 
-        if(host_page_size(host_port, &page_size) != KERN_SUCCESS ||
-           host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vm_stats, &count) != KERN_SUCCESS) {
+        if(host_page_size(host_port, &page_size) != KERN_SUCCESS || host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vstats, &count) != KERN_SUCCESS) {
             std::cerr << "Error getting virtual memory stats" << std::endl;
             return "";
         }
 
-        int64_t availableMemoryBytes = (vm_stats.free_count + vm_stats.inactive_count) * page_size;
+        int64_t availableMemoryBytes = (vstats.free_count + vstats.inactive_count) * page_size;
         totalMemoryGiB = static_cast<double>(totalMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
         availableMemoryGiB = static_cast<double>(availableMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
 
@@ -116,7 +110,6 @@ std::string SystemInfo::GetUptime() {
             std::cerr << "Error getting uptime on macOS" << std::endl;
             return "";
         }
-        // Calculate uptime in seconds
         uptimeSeconds = difftime(time(NULL), boottime.tv_sec);
 
     #else
@@ -192,7 +185,7 @@ std::string SystemInfo::GetDistro() {
 
 void SystemInfo::InitializeDistroID() {
 	#if defined(__APPLE__) && defined(__MACH__)
-        SystemInfo::distroID = "macos";
+        SystemInfo::s_distroID = "macos";
     #else
 	// Retreiving the ID value form /etc/os-release
     std::ifstream inputFile("/etc/os-release");
@@ -260,7 +253,7 @@ std::string SystemInfo::GetKernel() {
 		return line;
 	}
 	return "";
-} // ends GetKernel()
+}
 
 std::string SystemInfo::GetDesktopEnv() {
 	#if defined(__APPLE__) && defined(__MACH__)
@@ -269,7 +262,7 @@ std::string SystemInfo::GetDesktopEnv() {
 		const char* d = std::getenv("XDG_CURRENT_DESKTOP") ?: std::getenv("DESKTOP_SESSION") ?: std::getenv("DE");
 		return d ? std::string(d) : "";
 	#endif
-} // ends GetDesktopEnv()
+}
 
 std::string SystemInfo::GetShell() {
 	if(const char* shellEnv = std::getenv("SHELL")) {
@@ -281,63 +274,56 @@ std::string SystemInfo::GetShell() {
 }
 
 std::string SystemInfo::GetUser() {
-	const char* u = std::getenv("USER");
-	return (u && *u) ? std::string(u) : "";
-} // ends GetUser()
+    if(char* u = std::getenv("USER"); u && *u) return u;
+    return Exec("whoami");
+}
+
 
 std::string SystemInfo::GetPackagesByDistro() {
-    std::string packageDir;
-    std::string nixCommand = "nix-env --query --installed | wc -l";
+    const std::unordered_map<std::string, std::string> pkg_dir = {
+        // Pacman family
+        { "arch",      "/var/lib/pacman/local" },
+        { "manjaro",   "/var/lib/pacman/local" },
+        { "artix",     "/var/lib/pacman/local" },
+        { "endeavouros","/var/lib/pacman/local" },
+        // Dpkg family
+        { "debian",    "/var/lib/dpkg/info" },
+        { "ubuntu",    "/var/lib/dpkg/info" },
+        { "mint",      "/var/lib/dpkg/info" },
+        { "zorin",     "/var/lib/dpkg/info" },
+        { "popos",     "/var/lib/dpkg/info" },
+        // Rpm family
+        { "redhat",    "/var/lib/rpm" },
+        { "fedora",    "/var/lib/rpm" },
+        { "centos",    "/var/lib/rpm" },
+        { "slackware", "/var/lib/rpm" },
+        // Others
+        { "opensuse",  "/var/lib/zypp/db" },
+        { "gentoo",    "/var/db/pkg" },
+        { "flatpak",   "/var/lib/flatpak/app" },
+        { "void",      "/var/db/xbps" }
+    };
 
-    // Determine package directory based on distro
-    if(SystemInfo::distroID == "arch" || SystemInfo::distroID == "manjaro" || SystemInfo::distroID == "artix" || SystemInfo::distroID == "endeavouros") {
-        packageDir = "/var/lib/pacman/local";
-    } else if(SystemInfo::distroID == "debian" || SystemInfo::distroID == "ubuntu" || SystemInfo::distroID == "mint" || SystemInfo::distroID == "zorin" || SystemInfo::distroID == "popos") {
-        packageDir = "/var/lib/dpkg/info";
-    } else if(SystemInfo::distroID == "redhat" || SystemInfo::distroID == "fedora" || SystemInfo::distroID == "centos" || SystemInfo::distroID == "slackware") {
-        packageDir = "/var/lib/rpm";
-    } else if(SystemInfo::distroID == "opensuse") {
-        packageDir = "/var/lib/zypp/db";
-    } else if(SystemInfo::distroID == "gentoo") {
-        packageDir = "/var/db/pkg";
-    } else if(SystemInfo::distroID == "flatpak") {
-        packageDir = "/var/lib/flatpak/app";
-    } else if(SystemInfo::distroID == "void") {
-        packageDir = "/var/db/xbps";
-    } else if(SystemInfo::distroID == "nixos") {
-        return std::to_string(std::stoi(Exec(nixCommand.c_str())));
-    } else if(SystemInfo::distroID == "macos") {
-        // Count Homebrew packages (non-cask)
-        std::string brewCommand = "brew list --formula | wc -l";
-        int brewCount = std::stoi(Exec(brewCommand.c_str()));
-
-        // Count Homebrew cask packages
-        brewCommand = "brew list --cask | wc -l";
-        int brewCaskCount = std::stoi(Exec(brewCommand.c_str()));
-
-        // Count system-installed packages via pkgutil
-        std::string pkgutilCommand = "pkgutil --pkgs | wc -l";
-        int sysCount = std::stoi(Exec(pkgutilCommand.c_str()));
-
-        // Format the output as a string and return it
-        std::ostringstream output;
-        output << sysCount << " (system), " << brewCount << " (brew), " << brewCaskCount << " (brew cask)";
-
-        return output.str();
-    } else {
-        std::cerr << "Unsupported distribution: " << SystemInfo::distroID << std::endl;
-        return "-1";
+    // For pretty much all of the distros
+    if(auto it = pkg_dir.find(s_distroID); it != pkg_dir.end()) {
+        auto begin = std::filesystem::directory_iterator(it->second);
+        auto end   = std::filesystem::directory_iterator{};
+        auto cnt   = std::count_if(begin, end, [](auto const& e) { return e.is_directory(); });
+        return std::to_string(cnt);
     }
-    try {
-        unsigned int directoryCount = 0;
-        for(const auto& entry : std::filesystem::directory_iterator(packageDir)) {
-            if(std::filesystem::is_directory(entry.path())) {
-                directoryCount++;
-            }
-        }
-        return std::to_string(directoryCount);
-    } catch(const std::filesystem::filesystem_error& e) {
-        std::cerr << "Error accessing package directory: " << e.what() << std::endl;
-        return "-1";
+
+    // NixOS
+    if(s_distroID == "nixos") return Exec("nix-env --query --installed | wc -l");
+
+    // MacOS
+    if(s_distroID == "macos") {
+        int sys   = std::stoi(Exec("pkgutil --pkgs | wc -l"));
+        int brew  = std::stoi(Exec("brew list --formula | wc -l"));
+        int cask  = std::stoi(Exec("brew list --cask   | wc -l"));
+        std::ostringstream out;
+        out << sys   << " (system), " << brew  << " (brew), " << cask  << " (brew cask)";
+        return out.str();
     }
+    return "-1";
 }
+
