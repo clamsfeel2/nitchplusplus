@@ -136,7 +136,7 @@ nitch++ --clear
 Adjust the box width in the output
 
 ```sh
-nitch++ --width [integer >= 5]
+nitch++ --width [integer >= 6]
 ```
 
 Padding adjustment for each row/column is not currently supported, making this feature more of a gimmick for now. Still fun, I think.
@@ -153,7 +153,7 @@ Output of `nitch++ --help`
 -d, --distro [distro name]
      display ascii art of specified distro.
 
--w, --width [>=5]
+-w, --width [>=6]
      change the width of the output box with specified value.
 
 -c, --clear
@@ -162,4 +162,4 @@ Output of `nitch++ --help`
 
 ### Configuration
 
-In order to use the config file, put the [example config file](./config/example_config.toml) into the config directory. By default `nitch++` will use `$XDG_CONFIG_HOME/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml` 
+In order to use the config file, put the [example config file](./config/example_config.toml) into the config directory. By default `nitch++` will use `$XDG_CONFIG_HOME/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml`
