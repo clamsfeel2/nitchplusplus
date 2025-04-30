@@ -29,18 +29,18 @@ Because nitch has been unmaintained since 2022 and I think it was a neat project
 
 ### Support
 
-`nitch++` currently supports the following Linux distributions and macOS (mostly), although I have not been able to test all of them. If any problems arise, please create an [issue](https://github.com/clamsfeel2/nitchplusplus/issues/new).
+`nitch++` currently supports the following Linux distributions and MacOS (mostly), although I have not been able to test all of them. If any problems arise, please create an [issue](https://github.com/clamsfeel2/nitchplusplus/issues/new).
 
-- Ubuntu
 - Arch
 - EndeavourOS
 - Artix
 - Manjaro
 - Debian
+- Ubuntu
+- PopOS!
+- Mint
 - Fedora
 - RedHat
-- Mint
-- PopOS!
 - Void
 - OpenSUSE
 - Gentoo
@@ -48,6 +48,7 @@ Because nitch has been unmaintained since 2022 and I think it was a neat project
 - Zorin
 - Slackware
 - CentOS
+- MacOS
 
 ### Dependencies
 
