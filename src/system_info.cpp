@@ -28,7 +28,7 @@ void SystemInfo::Initialize(bool getLogos) {
 	kernel = (icon.showKernel ? GetKernel() : ""); // /proc/sys/kernel/osrelease
 	shell = (icon.showShell ? GetShell() : ""); // SHELL env var
 	user = (icon.showUsername ? GetUser() : ""); // USER env var
-	packageCount = (icon.showPkg ? GetPackagesByDistro() : 0); // Each distros package dir in /var/*
+	packageCount = (icon.showPkg ? GetPackagesByDistro() : "0"); // Each distros package dir in /var/*
 	uptime = (icon.showUptime ? GetUptime() : ""); // /proc/uptime
 	memory = (icon.showMemory ? GetMemoryUsage() : ""); // /proc/meminfo
 	de = (icon.showDeWm ? GetDesktopEnv() : ""); // XDG_CURRENT_DESKTOP, CURRENT_DESKTOP, DE env vars, aqua for mac (prob not the best to hardcode it FIXME)
