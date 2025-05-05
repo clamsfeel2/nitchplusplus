@@ -14,7 +14,7 @@ const std::string& Logos::GetLogos(const std::string& id) {
 }
 
 bool Logos::IsValidDistro(const std::string& id) {
-    const auto& art = LoadAsciiArt();
+    const std::unordered_map<std::string, std::string>& art = LoadAsciiArt();
     return art.find(id) != art.end();
 }
 
