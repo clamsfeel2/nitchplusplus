@@ -14,7 +14,7 @@ namespace C {
 	constexpr const char* U_WHITE = "\033[4;38m";
 	constexpr const char* B_U_WHITE = "\033[1;4;38m";
 
-	// Purple 
+	// Purple
 	constexpr const char* PURPLE   = "\033[0;95m";
 	constexpr const char* U_PURPLE  = "\033[0;4;95m";
 	constexpr const char* B_PURPLE  = "\033[1;95m";
