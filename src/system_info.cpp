@@ -199,13 +199,9 @@ void SystemInfo::InitializeDistroID() {
 
         if(std::getline(iss, key, '=') && std::getline(iss, value)) {
             if(key == "ID") {
-                if(!value.empty() && value.front() == '\"') {
-                    value.erase(0, 1);
-                }
-                if(!value.empty() && value.back() == '\"') {
-                    value.pop_back();
-                }
-                SystemInfo::distroID = value;
+                if(!value.empty() && value.front() == '\"') value.erase(0, 1);
+                if(!value.empty() && value.back() == '\"') value.pop_back();
+                SystemInfo::s_distroID = value;
                 break;
             }
         }
