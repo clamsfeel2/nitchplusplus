@@ -6,12 +6,12 @@
 #include <sstream>
 #include <filesystem>
 #include <array>
-
 #if defined(__APPLE__) && defined(__MACH__)
     #include <mach/mach.h>
     #include <sys/sysctl.h>
 	#include <unistd.h>
 #else
+    #include <algorithm> // Only needs this on Linux, etc. it seems... maybe?
     #include <fstream>
 #endif
 

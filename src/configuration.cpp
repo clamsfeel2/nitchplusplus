@@ -5,6 +5,10 @@
 #include "logos.h"
 #include <filesystem>
 #include <toml++/toml.hpp>
+#ifdef __linux__
+    #include <algorithm> // Only needs this on Linux, etc. it seems... maybe?
+#endif
+
 
 std::string Configuration::s_configFile     = "";
 std::string Configuration::s_tmpDistro      = "";
