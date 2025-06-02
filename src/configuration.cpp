@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <toml++/toml.hpp>
 #ifdef __linux__
-    #include <algorithm> // Only needs this on Linux, etc. it seems... maybe?
+    #include <algorithm>
 #endif
 
 
@@ -19,20 +19,23 @@ bool Configuration::s_noNerdFonts           = false;
 bool Configuration::s_distroSuppliedFromCli = false;
 
 std::string Configuration::GetConfigPath() {
+    const std::map<const char*, std::filesystem::path> envConfigLocations = {{ "NITCHPP_CONFIG_FILE", "" }, { "XDG_CONFIG_HOME", "nitch++/config.toml" }, { "HOME", ".config/nitch++/config.toml" }};
     std::filesystem::path configPath;
-    if(auto* env = std::getenv("NITCHPP_CONFIG_FILE"); env && *env) {
-        configPath = env;
-    } else if(auto* xdg = std::getenv("XDG_CONFIG_HOME"); xdg && *xdg) {
-        configPath = std::filesystem::path(xdg) / "nitch++" / "config.toml";
-    } else if(auto* home = std::getenv("HOME"); home && *home) {
-        configPath = std::filesystem::path(home) / ".config" / "nitch++" / "config.toml";
-    } else {
-        throw std::runtime_error("Could not determine config path: " "NITCHPP_CONFIG_FILE, XDG_CONFIG_HOME and HOME are all unset");
+
+    for(auto& [envVar, suffix] : envConfigLocations) {
+        if(auto* val = std::getenv(envVar); val && *val) {
+            configPath = std::filesystem::path(val) / suffix;
+            break;
+        }
     }
-    // Ensure the directory exists no-op if it does
+    if(configPath.empty())
+        throw std::runtime_error("Could not determine config path: NITCHPP_CONFIG_FILE, XDG_CONFIG_HOME and HOME are all unset");
+
+    // Ensure the directory exists no op if it does
     std::error_code ec;
     std::filesystem::create_directories(configPath.parent_path(), ec);
     if(ec) throw std::invalid_argument("Error: could not create config directory: " + configPath.parent_path().string());
+
     return configPath.string();
 }
 
