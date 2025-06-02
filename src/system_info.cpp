@@ -133,9 +133,8 @@ std::string SystemInfo::GetDistro() {
     distro.erase(std::remove(distro.begin(), distro.end(), '\n'), distro.end());
 #else
     std::ifstream inputFile("/etc/os-release");
-    if(!inputFile.is_open()) {
-        return "NULL";
-    }
+    if(!inputFile.is_open()) return "NULL";
+
     std::string line, key, value;
     while(std::getline(inputFile, line)) {
         std::istringstream iss(line);

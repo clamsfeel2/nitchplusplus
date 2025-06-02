@@ -18,6 +18,7 @@ std::unordered_map<std::string, std::string> Icons::s_distroIconMap = {
    { "macos",       ""    },
    { "nixos",       ""    }
 };
+
 std::string	Icons::s_iconUser("");
 std::string Icons::s_iconHname("");
 std::string Icons::s_iconKernel("󰌢");

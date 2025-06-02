@@ -9,7 +9,6 @@
     #include <algorithm>
 #endif
 
-
 std::string Configuration::s_configFile     = "";
 std::string Configuration::s_tmpDistro      = "";
 int Configuration::s_width                  = 6;
@@ -55,14 +54,7 @@ size_t Configuration::ParseConfigFile() {
     if(!modsPtr) throw std::invalid_argument("Missing [modules] section");
     toml::table& mods = *modsPtr;
 
-    struct Spec {
-        const char*   name;
-        const char*   defIcon;
-        bool          defShow;
-        std::string*  outIcon;
-        bool*         outShow;
-    };
-
+    struct Spec { const char* name; const char* defIcon; bool defShow; std::string* outIcon; bool* outShow; };
     std::vector<Spec> specs = {
         { "username", "", true,  &icon.s_iconUser,    &icon.s_showUsername },
         { "hostname", "", true,  &icon.s_iconHname,   &icon.s_showHostname },
@@ -71,7 +63,7 @@ size_t Configuration::ParseConfigFile() {
         { "uptime",   "", true,  &icon.s_iconUptime,  &icon.s_showUptime   },
         { "shell",    "", true,  &icon.s_iconShell,   &icon.s_showShell    },
         { "dewm",     "", true, &icon.s_iconDeWm,    &icon.s_showDeWm      },
-        { "pkgs",     "󰏖", true,  &icon.s_iconPkgs,    &icon.s_showPkgs      },
+        { "pkgs",     "󰏖", true,  &icon.s_iconPkgs,    &icon.s_showPkgs     },
         { "memory",   "󰍛", true,  &icon.s_iconMemory,  &icon.s_showMemory   }
     };
 
