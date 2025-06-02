@@ -10,8 +10,9 @@
     #include <mach/mach.h>
     #include <sys/sysctl.h>
 	#include <unistd.h>
+    #include <cstring>
 #else
-    #include <algorithm> // Only needs this on Linux, etc. it seems... maybe?
+    #include <algorithm>
     #include <fstream>
 #endif
 
@@ -274,9 +275,8 @@ std::string SystemInfo::GetUser() {
     return Exec("whoami");
 }
 
-
 std::string SystemInfo::GetPackagesByDistro() {
-    const std::unordered_map<std::string, std::string> pkg_dir = {
+    const std::unordered_map<std::string, std::string> distroPkgPathMap = {
         // Pacman family
         { "arch",      "/var/lib/pacman/local" },
         { "manjaro",   "/var/lib/pacman/local" },
@@ -300,24 +300,48 @@ std::string SystemInfo::GetPackagesByDistro() {
         { "void",      "/var/db/xbps" }
     };
 
+    auto countSubDirs = [&](const std::string& path) -> int {
+        int cnt = 0;
+        std::error_code err;
+        for(auto& dirEntry : std::filesystem::directory_iterator(path, std::filesystem::directory_options::skip_permission_denied, err)) {
+            if(dirEntry.is_directory()) ++cnt;
+        }
+        return cnt;
+    };
+
     // For pretty much all of the distros
-    if(auto it = pkg_dir.find(s_distroID); it != pkg_dir.end()) {
-        auto begin = std::filesystem::directory_iterator(it->second);
-        auto end   = std::filesystem::directory_iterator{};
-        auto cnt   = std::count_if(begin, end, [](auto const& e) { return e.is_directory(); });
-        return std::to_string(cnt);
+    if(auto it = distroPkgPathMap.find(s_distroID); it != distroPkgPathMap.end()) {
+        return std::to_string(countSubDirs(it->second));
     }
 
-    // NixOS
+    // NixOS (because I haven't learned how nix pkg system works yet)
     if(s_distroID == "nixos") return Exec("nix-env --query --installed | wc -l");
 
     // MacOS
     if(s_distroID == "macos") {
-        int sys   = std::stoi(Exec("pkgutil --pkgs | wc -l"));
-        int brew  = std::stoi(Exec("brew list --formula | wc -l"));
-        int cask  = std::stoi(Exec("brew list --cask   | wc -l"));
         std::ostringstream out;
-        out << sys   << " (system), " << brew  << " (brew), " << cask  << " (brew cask)";
+
+        int sysCount = std::stoi(Exec("pkgutil --pkgs | wc -l"));
+        out << sysCount << " (system)";
+
+        // Homebrew
+        const char* brewEnv = std::getenv("HOMEBREW_PREFIX");
+        std::string brewPrefix = brewEnv ? brewEnv : "/opt/homebrew";
+        int brewFormulae = countSubDirs(brewPrefix + "/Cellar");
+        if(brewFormulae > 0) out << ", " << brewFormulae << " (brew)";
+        int brewCask = countSubDirs(brewPrefix + "/Caskroom");
+        if(brewCask > 0) out << ", " << brewCask << " (brew cask)";
+
+        // Macports
+        const char* portsEnv = std::getenv("MACPORTS_PREFIX");
+        std::string portsPrefix = portsEnv ? portsEnv : "/opt/local";
+        int macportsCount = countSubDirs(portsPrefix + "/var/macports/software");
+        if(macportsCount > 0) out << ", " << macportsCount << " (macports)";
+
+        // Nixenv (see above)
+        int nixCount = std::stoi(Exec("nix-env --query --installed 2>/dev/null | wc -l"));
+        if(nixCount > 0) out << ", " << nixCount << " (nix)";
+
         return out.str();
     }
     return "-1";
