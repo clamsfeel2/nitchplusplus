@@ -52,8 +52,7 @@ std::string SystemInfo::GetMemoryUsage() {
         int64_t totalMemoryBytes = 0;
         size_t size = sizeof(totalMemoryBytes);
         if(sysctlbyname("hw.memsize", &totalMemoryBytes, &size, NULL, 0) != 0) {
-            std::cerr << "Error getting total memory" << std::endl;
-            return "";
+            return "NULL";
         }
 
         mach_port_t host_port = mach_host_self();
@@ -62,8 +61,7 @@ std::string SystemInfo::GetMemoryUsage() {
         vm_statistics64_data_t vstats;
 
         if(host_page_size(host_port, &page_size) != KERN_SUCCESS || host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vstats, &count) != KERN_SUCCESS) {
-            std::cerr << "Error getting virtual memory stats" << std::endl;
-            return "";
+            return "NULL";
         }
 
         int64_t availableMemoryBytes = (vstats.free_count + vstats.inactive_count) * page_size;
@@ -73,8 +71,7 @@ std::string SystemInfo::GetMemoryUsage() {
     #else
         std::ifstream meminfoFile("/proc/meminfo");
         if(!meminfoFile.is_open()) {
-            std::cerr << "Error opening /proc/meminfo" << std::endl;
-            return "";
+            return "NULL";
         }
 
 		std::string key, value;
@@ -88,8 +85,7 @@ std::string SystemInfo::GetMemoryUsage() {
         meminfoFile.close();
 
         if(totalMemoryGiB == 0.0 || availableMemoryGiB == 0.0) {
-            std::cerr << "Error parsing /proc/meminfo" << std::endl;
-            return "";
+            return "NULL";
         }
     #endif
 
@@ -108,16 +104,14 @@ std::string SystemInfo::GetUptime() {
         struct timeval boottime;
         size_t size = sizeof(boottime);
         if(sysctlbyname("kern.boottime", &boottime, &size, NULL, 0) != 0 || boottime.tv_sec == 0) {
-            std::cerr << "Error getting uptime on macOS" << std::endl;
-            return "";
+            return "NULL";
         }
         uptimeSeconds = difftime(time(NULL), boottime.tv_sec);
 
     #else
         std::ifstream uptimeFile("/proc/uptime");
         if(!uptimeFile.is_open()) {
-            std::cerr << "Error opening /proc/uptime on Linux" << std::endl;
-            return "";
+            return "NULL";
         }
         std::string line;
         getline(uptimeFile, line);
@@ -147,8 +141,7 @@ std::string SystemInfo::GetDistro() {
         std::string result;
         std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("sw_vers -productName && sw_vers -productVersion", "r"), pclose);
         if(!pipe) {
-            std::cerr << "Error getting macOS version" << std::endl;
-            return "";
+            return "NULL";
         }
         while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
             result += buffer.data();
@@ -159,8 +152,7 @@ std::string SystemInfo::GetDistro() {
     #else
         std::ifstream inputFile("/etc/os-release");
         if(!inputFile.is_open()) {
-            std::cerr << "Error opening /etc/os-release on Linux" << std::endl;
-            return "";
+            return "NULL";
         }
         std::string line, key, value;
         while (std::getline(inputFile, line)) {
@@ -221,18 +213,18 @@ std::string SystemInfo::GetHostname() {
 		}
 		return host;
 	}
-	return "";
+	return "NULL";
 #elif __linux__
 	std::ifstream inputFile("/proc/sys/kernel/hostname");
 	if(!inputFile.is_open()) {
-		return "";
+		return "NULL";
 	}
 	std::string line;
 	while (std::getline(inputFile, line)) {
 		return line;
 	}
 #endif
-	return "";
+	return "NULL";
 }
 
 std::string SystemInfo::GetKernel() {
@@ -243,18 +235,25 @@ std::string SystemInfo::GetKernel() {
 		if(!ker.empty()) {
 			return ker;
 		} else {
-			return "";
+			return "NULL";
 		}
 	}
 	while(std::getline(inputFile, line)) {
 		return line;
 	}
-	return "";
+	return "NULL";
 }
 
 std::string SystemInfo::GetDesktopEnv() {
 	#if defined(__APPLE__) && defined(__MACH__)
-		return !system("pgrep -q yabai") ? "yabai" : "Aqua";
+    static const std::vector<std::string> wms = { "yabai", "amethyst", "loop" };
+    for(const std::string& wm : wms) {
+        std::string cmd = "pgrep -q " + wm + " 2>/dev/null";
+        if(system(cmd.c_str()) == 0) {
+            return wm;
+        }
+    }
+    return "Aqua";
 	#else
 		const char* d = std::getenv("XDG_CURRENT_DESKTOP") ?: std::getenv("DESKTOP_SESSION") ?: std::getenv("DE");
 		return d ? std::string(d) : "";
@@ -267,7 +266,7 @@ std::string SystemInfo::GetShell() {
 		size_t lastSlashIndex = shell.find_last_of('/');
 		return lastSlashIndex == std::string::npos ? shell : shell.erase(0, lastSlashIndex + 1);
 	}
-	return "";
+	return "NULL";
 }
 
 std::string SystemInfo::GetUser() {
