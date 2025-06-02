@@ -51,23 +51,19 @@ std::string SystemInfo::GetMemoryUsage() {
 #if defined(__APPLE__) && defined(__MACH__)
     int64_t totalMemoryBytes = 0;
     size_t size = sizeof(totalMemoryBytes);
-    if(sysctlbyname("hw.memsize", &totalMemoryBytes, &size, NULL, 0) != 0) {
-        return "NULL";
-    }
+    if(sysctlbyname("hw.memsize", &totalMemoryBytes, &size, NULL, 0) != 0) return "NULL";
 
     mach_port_t host_port = mach_host_self();
     vm_size_t page_size;
     mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
     vm_statistics64_data_t vstats;
 
-    if(host_page_size(host_port, &page_size) != KERN_SUCCESS || host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vstats, &count) != KERN_SUCCESS) {
+    if(host_page_size(host_port, &page_size) != KERN_SUCCESS || host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vstats, &count) != KERN_SUCCESS)
         return "NULL";
-    }
 
     int64_t availableMemoryBytes = (vstats.free_count + vstats.inactive_count) * page_size;
     totalMemoryGiB = static_cast<double>(totalMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
     availableMemoryGiB = static_cast<double>(availableMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
-
 #else
     std::ifstream meminfoFile("/proc/meminfo");
     if(!meminfoFile.is_open()) {
@@ -85,9 +81,7 @@ std::string SystemInfo::GetMemoryUsage() {
     meminfoFile.close();
 
     if(totalMemoryGiB == 0.0 || availableMemoryGiB == 0.0) return "NULL";
-
 #endif
-
     double usedMemoryGiB = totalMemoryGiB - availableMemoryGiB;
     std::ostringstream outputStr;
     outputStr.precision(2);
@@ -132,16 +126,10 @@ std::string SystemInfo::GetUptime() {
 std::string SystemInfo::GetDistro() {
 #if defined(__APPLE__) && defined(__MACH__)
     std::array<char, 128> buffer;
-    std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("sw_vers -productName && sw_vers -productVersion", "r"), pclose);
     if(!pipe) return "NULL";
 
-    while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
-    }
-
-    // Remove trailing newlines
-    distro = result;
+    while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) distro += buffer.data();
     distro.erase(std::remove(distro.begin(), distro.end(), '\n'), distro.end());
 #else
     std::ifstream inputFile("/etc/os-release");
@@ -162,7 +150,6 @@ std::string SystemInfo::GetDistro() {
     }
     inputFile.close();
 #endif
-
     return distro;
 }
 
@@ -221,9 +208,7 @@ std::string SystemInfo::GetKernel() {
             return "NULL";
         }
     }
-    while(std::getline(inputFile, line)) {
-        return line;
-    }
+    while(std::getline(inputFile, line)) return line;
     return "NULL";
 }
 
@@ -257,42 +242,37 @@ std::string SystemInfo::GetUser() {
 
 std::string SystemInfo::GetPackagesByDistro() {
     const std::unordered_map<std::string, std::string> distroPkgPathMap = {
-        // Pacman family
-        { "arch",      "/var/lib/pacman/local" },
-        { "manjaro",   "/var/lib/pacman/local" },
-        { "artix",     "/var/lib/pacman/local" },
-        { "endeavouros","/var/lib/pacman/local" },
-        // Dpkg family
-        { "debian",    "/var/lib/dpkg/info" },
-        { "ubuntu",    "/var/lib/dpkg/info" },
-        { "mint",      "/var/lib/dpkg/info" },
-        { "zorin",     "/var/lib/dpkg/info" },
-        { "popos",     "/var/lib/dpkg/info" },
-        // Rpm family
-        { "redhat",    "/var/lib/rpm" },
-        { "fedora",    "/var/lib/rpm" },
-        { "centos",    "/var/lib/rpm" },
-        { "slackware", "/var/lib/rpm" },
-        // Others
-        { "opensuse",  "/var/lib/zypp/db" },
-        { "gentoo",    "/var/db/pkg" },
-        { "flatpak",   "/var/lib/flatpak/app" },
-        { "void",      "/var/db/xbps" }
+         { "arch",        "/var/lib/pacman/local" },
+         { "manjaro",     "/var/lib/pacman/local" },
+         { "artix",       "/var/lib/pacman/local" },
+         { "endeavouros", "/var/lib/pacman/local" },
+         { "debian",      "/var/lib/dpkg/info"    },
+         { "ubuntu",      "/var/lib/dpkg/info"    },
+         { "mint",        "/var/lib/dpkg/info"    },
+         { "zorin",       "/var/lib/dpkg/info"    },
+         { "popos",       "/var/lib/dpkg/info"    },
+         { "redhat",      "/var/lib/rpm"          },
+        { "fedora",      "/var/lib/rpm"          },
+        { "centos",      "/var/lib/rpm"          },
+        { "slackware",   "/var/lib/rpm"          },
+        { "opensuse",    "/var/lib/zypp/db"      },
+        { "gentoo",      "/var/db/pkg"           },
+        { "flatpak",     "/var/lib/flatpak/app"  },
+        { "void",        "/var/db/xbps"          }
     };
 
     auto countSubDirs = [&](const std::string& path) -> int {
         int cnt = 0;
         std::error_code err;
-        for(auto& dirEntry : std::filesystem::directory_iterator(path, std::filesystem::directory_options::skip_permission_denied, err)) {
+        for(auto& dirEntry : std::filesystem::directory_iterator(path, std::filesystem::directory_options::skip_permission_denied, err))
             if(dirEntry.is_directory()) ++cnt;
-        }
+
         return cnt;
     };
 
     // For pretty much all of the distros
-    if(auto it = distroPkgPathMap.find(s_distroID); it != distroPkgPathMap.end()) {
+    if(auto it = distroPkgPathMap.find(s_distroID); it != distroPkgPathMap.end())
         return std::to_string(countSubDirs(it->second));
-    }
 
     // NixOS (because I haven't learned how nix pkg system works yet)
     if(s_distroID == "nixos") return Exec("nix-env --query --installed | wc -l");
