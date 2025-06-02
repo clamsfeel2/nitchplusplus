@@ -9,7 +9,7 @@
 #if defined(__APPLE__) && defined(__MACH__)
     #include <mach/mach.h>
     #include <sys/sysctl.h>
-	#include <unistd.h>
+    #include <unistd.h>
     #include <cstring>
 #else
     #include <algorithm>
@@ -20,74 +20,73 @@ std::string SystemInfo::s_distroID;
 std::string SystemInfo::s_logo;
 
 void SystemInfo::Initialize(bool getLogos) {
-	if(getLogos) s_logo = Logos::GetLogos(SystemInfo::s_distroID);
-	Icons icon;
-	distro        = (icon.s_showDistro ? GetDistro() : "");          // Uses /etc/os-release
-	hostname      = (icon.s_showHostname ? GetHostname() : "");      // /proc/sys/kernel/hostname
-	kernel        = (icon.s_showKernel ? GetKernel() : "");          // /proc/sys/kernel/osrelease
-	shell         = (icon.s_showShell ? GetShell() : "");            // SHELL env var
-	user          = (icon.s_showUsername ? GetUser() : "");          // USER env var
-	packageCount  = (icon.s_showPkgs ? GetPackagesByDistro() : "0");  // Each distros package dir in /var/*
-	uptime        = (icon.s_showUptime ? GetUptime() : "");          // /proc/uptime
-	memory        = (icon.s_showMemory ? GetMemoryUsage() : "");     // /proc/meminfo
-	de            = (icon.s_showDeWm ? GetDesktopEnv() : "");        // XDG_CURRENT_DESKTOP, CURRENT_DESKTOP, DE env vars, aqua for mac (prob not the best to hardcode it... FIXME?)
+    if(getLogos) s_logo = Logos::GetLogos(SystemInfo::s_distroID);
+    Icons icon;
+    distro        = (icon.s_showDistro ? GetDistro() : "");           // Uses /etc/os-release
+    hostname      = (icon.s_showHostname ? GetHostname() : "");       // /proc/sys/kernel/hostname
+    kernel        = (icon.s_showKernel ? GetKernel() : "");           // /proc/sys/kernel/osrelease
+    shell         = (icon.s_showShell ? GetShell() : "");             // SHELL env var
+    user          = (icon.s_showUsername ? GetUser() : "");           // USER env var
+    packageCount  = (icon.s_showPkgs ? GetPackagesByDistro() : "0");  // Each distros package dir in /var/*
+    uptime        = (icon.s_showUptime ? GetUptime() : "");           // /proc/uptime
+    memory        = (icon.s_showMemory ? GetMemoryUsage() : "");      // /proc/meminfo
+    de            = (icon.s_showDeWm ? GetDesktopEnv() : "");         // XDG_CURRENT_DESKTOP, CURRENT_DESKTOP, DE env vars
 }
 
 std::string SystemInfo::Exec(const char* command) {
-	std::array<char, 128> buffer;
-	std::string result;
-	auto closePipe = [](FILE* file) { pclose(file); };
-	std::unique_ptr<FILE, decltype(closePipe)> pipe(popen(command, "r"), closePipe);
+    std::array<char, 128> buffer;
+    std::string result;
+    auto closePipe = [](FILE* file) { pclose(file); };
+    std::unique_ptr<FILE, decltype(closePipe)> pipe(popen(command, "r"), closePipe);
 
-	if(!pipe) throw std::runtime_error("Exec method failed!");
-	while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) result += buffer.data();
+    if(!pipe) throw std::runtime_error("Exec method failed!");
+    while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) result += buffer.data();
 
-	return result;
+    return result;
 }
 
 std::string SystemInfo::GetMemoryUsage() {
     double totalMemoryGiB = 0.0, availableMemoryGiB = 0.0;
 
-    #if defined(__APPLE__) && defined(__MACH__)
-        int64_t totalMemoryBytes = 0;
-        size_t size = sizeof(totalMemoryBytes);
-        if(sysctlbyname("hw.memsize", &totalMemoryBytes, &size, NULL, 0) != 0) {
-            return "NULL";
+#if defined(__APPLE__) && defined(__MACH__)
+    int64_t totalMemoryBytes = 0;
+    size_t size = sizeof(totalMemoryBytes);
+    if(sysctlbyname("hw.memsize", &totalMemoryBytes, &size, NULL, 0) != 0) {
+        return "NULL";
+    }
+
+    mach_port_t host_port = mach_host_self();
+    vm_size_t page_size;
+    mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
+    vm_statistics64_data_t vstats;
+
+    if(host_page_size(host_port, &page_size) != KERN_SUCCESS || host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vstats, &count) != KERN_SUCCESS) {
+        return "NULL";
+    }
+
+    int64_t availableMemoryBytes = (vstats.free_count + vstats.inactive_count) * page_size;
+    totalMemoryGiB = static_cast<double>(totalMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
+    availableMemoryGiB = static_cast<double>(availableMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
+
+#else
+    std::ifstream meminfoFile("/proc/meminfo");
+    if(!meminfoFile.is_open()) {
+        return "NULL";
+    }
+
+    std::string key, value;
+    while(getline(meminfoFile, key)) {
+        std::istringstream lineStream(key);
+        if(lineStream >> key >> value) {
+            if(key == "MemTotal:") totalMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
+            else if(key == "MemAvailable:") availableMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
         }
+    }
+    meminfoFile.close();
 
-        mach_port_t host_port = mach_host_self();
-        vm_size_t page_size;
-        mach_msg_type_number_t count = HOST_VM_INFO_COUNT;
-        vm_statistics64_data_t vstats;
+    if(totalMemoryGiB == 0.0 || availableMemoryGiB == 0.0) return "NULL";
 
-        if(host_page_size(host_port, &page_size) != KERN_SUCCESS || host_statistics64(host_port, HOST_VM_INFO, (host_info64_t)&vstats, &count) != KERN_SUCCESS) {
-            return "NULL";
-        }
-
-        int64_t availableMemoryBytes = (vstats.free_count + vstats.inactive_count) * page_size;
-        totalMemoryGiB = static_cast<double>(totalMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
-        availableMemoryGiB = static_cast<double>(availableMemoryBytes) / (1024.0 * 1024.0 * 1024.0);
-
-    #else
-        std::ifstream meminfoFile("/proc/meminfo");
-        if(!meminfoFile.is_open()) {
-            return "NULL";
-        }
-
-		std::string key, value;
-		while(getline(meminfoFile, key)) {
-			std::istringstream lineStream(key);
-			if(lineStream >> key >> value) {
-				if(key == "MemTotal:") totalMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
-				else if(key == "MemAvailable:") availableMemoryGiB = std::stod(value) / (1024.0 * 1024.0);
-			}
-		}
-        meminfoFile.close();
-
-        if(totalMemoryGiB == 0.0 || availableMemoryGiB == 0.0) {
-            return "NULL";
-        }
-    #endif
+#endif
 
     double usedMemoryGiB = totalMemoryGiB - availableMemoryGiB;
     std::ostringstream outputStr;
@@ -100,27 +99,22 @@ std::string SystemInfo::GetMemoryUsage() {
 std::string SystemInfo::GetUptime() {
     double uptimeSeconds = 0.0;
 
-    #if defined(__APPLE__) && defined(__MACH__)
-        struct timeval boottime;
-        size_t size = sizeof(boottime);
-        if(sysctlbyname("kern.boottime", &boottime, &size, NULL, 0) != 0 || boottime.tv_sec == 0) {
-            return "NULL";
-        }
-        uptimeSeconds = difftime(time(NULL), boottime.tv_sec);
+#if defined(__APPLE__) && defined(__MACH__)
+    struct timeval boottime;
+    size_t size = sizeof(boottime);
+    if(sysctlbyname("kern.boottime", &boottime, &size, NULL, 0) != 0 || boottime.tv_sec == 0) return "NULL";
 
-    #else
-        std::ifstream uptimeFile("/proc/uptime");
-        if(!uptimeFile.is_open()) {
-            return "NULL";
-        }
-        std::string line;
-        getline(uptimeFile, line);
-        std::istringstream iss(line);
-        iss >> uptimeSeconds;
-        uptimeFile.close();
-    #endif
+    uptimeSeconds = difftime(time(NULL), boottime.tv_sec);
+#else
+    std::ifstream uptimeFile("/proc/uptime");
+    if(!uptimeFile.is_open()) return "NULL";
 
-    // Convert seconds into days, hours, and minutes
+    std::string line;
+    getline(uptimeFile, line);
+    std::istringstream iss(line);
+    iss >> uptimeSeconds;
+    uptimeFile.close();
+#endif
     int days = static_cast<int>(uptimeSeconds / (24 * 3600));
     uptimeSeconds -= days * 24 * 3600;
     int hours = static_cast<int>(uptimeSeconds / 3600);
@@ -136,55 +130,49 @@ std::string SystemInfo::GetUptime() {
 }
 
 std::string SystemInfo::GetDistro() {
-    #if defined(__APPLE__) && defined(__MACH__)
-        std::array<char, 128> buffer;
-        std::string result;
-        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("sw_vers -productName && sw_vers -productVersion", "r"), pclose);
-        if(!pipe) {
-            return "NULL";
-        }
-        while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-            result += buffer.data();
-        }
-        // Remove trailing newlines
-        distro = result;
-        distro.erase(std::remove(distro.begin(), distro.end(), '\n'), distro.end());
-    #else
-        std::ifstream inputFile("/etc/os-release");
-        if(!inputFile.is_open()) {
-            return "NULL";
-        }
-        std::string line, key, value;
-        while (std::getline(inputFile, line)) {
-            std::istringstream iss(line);
-            if(std::getline(iss, key, '=') && std::getline(iss, value)) {
-                if(!value.empty() && value.front() == '\"') {
-                    value.erase(0, 1);
-                }
-                if(!value.empty() && value.back() == '\"') {
-                    value.pop_back();
-                }
-                if(key == "PRETTY_NAME") {
-                    distro = value;
-                    break;
-                }
+#if defined(__APPLE__) && defined(__MACH__)
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen("sw_vers -productName && sw_vers -productVersion", "r"), pclose);
+    if(!pipe) return "NULL";
+
+    while(fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+
+    // Remove trailing newlines
+    distro = result;
+    distro.erase(std::remove(distro.begin(), distro.end(), '\n'), distro.end());
+#else
+    std::ifstream inputFile("/etc/os-release");
+    if(!inputFile.is_open()) {
+        return "NULL";
+    }
+    std::string line, key, value;
+    while(std::getline(inputFile, line)) {
+        std::istringstream iss(line);
+        if(std::getline(iss, key, '=') && std::getline(iss, value)) {
+            if(!value.empty() && value.front() == '\"') value.erase(0, 1);
+            if(!value.empty() && value.back() == '\"') value.pop_back();
+            if(key == "PRETTY_NAME") {
+                distro = value;
+                break;
             }
         }
-        inputFile.close();
-    #endif
+    }
+    inputFile.close();
+#endif
 
     return distro;
 }
 
 void SystemInfo::InitializeDistroID() {
-	#if defined(__APPLE__) && defined(__MACH__)
-        SystemInfo::s_distroID = "macos";
-    #else
-	// Retreiving the ID value form /etc/os-release
+#if defined(__APPLE__) && defined(__MACH__)
+    SystemInfo::s_distroID = "macos";
+#else
     std::ifstream inputFile("/etc/os-release");
-    if(!inputFile.is_open()) {
-        return;
-    }
+    if(!inputFile.is_open()) return;
+
     std::string line;
     while(std::getline(inputFile, line)) {
         std::istringstream iss(line);
@@ -200,73 +188,66 @@ void SystemInfo::InitializeDistroID() {
         }
     }
     inputFile.close();
-	#endif
+#endif
 }
 
 std::string SystemInfo::GetHostname() {
 #if defined(__APPLE__) && defined(__MACH__)
-	char buffer[256];
-	if(gethostname(buffer, sizeof(buffer)) == 0) {
-		std::string host(buffer);
-		if(host.size() > 6 && host.substr(host.size() - 6) == ".local") {
-			return host.substr(0, host.size() - 6);
-		}
-		return host;
-	}
-	return "NULL";
+    char buffer[256];
+    if(gethostname(buffer, sizeof(buffer)) == 0) {
+        std::string host(buffer);
+        if(host.size() > 6 && host.substr(host.size() - 6) == ".local") return host.substr(0, host.size() - 6);
+        return host;
+    }
+    return "NULL";
 #elif __linux__
-	std::ifstream inputFile("/proc/sys/kernel/hostname");
-	if(!inputFile.is_open()) {
-		return "NULL";
-	}
-	std::string line;
-	while (std::getline(inputFile, line)) {
-		return line;
-	}
+    std::ifstream inputFile("/proc/sys/kernel/hostname");
+    if(!inputFile.is_open()) return "NULL";
+
+    std::string line;
+    while(std::getline(inputFile, line)) return line;
 #endif
-	return "NULL";
+    return "NULL";
 }
 
 std::string SystemInfo::GetKernel() {
-	std::string line, ker;
-	std::ifstream inputFile("/proc/sys/kernel/osrelease");
-	if(!inputFile.is_open()) {
-		ker = Exec("uname -r");
-		if(!ker.empty()) {
-			return ker;
-		} else {
-			return "NULL";
-		}
-	}
-	while(std::getline(inputFile, line)) {
-		return line;
-	}
-	return "NULL";
+    std::string line, ker;
+    std::ifstream inputFile("/proc/sys/kernel/osrelease");
+    if(!inputFile.is_open()) {
+        ker = Exec("uname -r");
+        if(!ker.empty()) {
+            return ker;
+        } else {
+            return "NULL";
+        }
+    }
+    while(std::getline(inputFile, line)) {
+        return line;
+    }
+    return "NULL";
 }
 
 std::string SystemInfo::GetDesktopEnv() {
-	#if defined(__APPLE__) && defined(__MACH__)
+#if defined(__APPLE__) && defined(__MACH__)
     static const std::vector<std::string> wms = { "yabai", "amethyst", "loop" };
     for(const std::string& wm : wms) {
         std::string cmd = "pgrep -q " + wm + " 2>/dev/null";
-        if(system(cmd.c_str()) == 0) {
-            return wm;
-        }
+        if(system(cmd.c_str()) == 0) return wm;
     }
     return "Aqua";
-	#else
-		const char* d = std::getenv("XDG_CURRENT_DESKTOP") ?: std::getenv("DESKTOP_SESSION") ?: std::getenv("DE");
-		return d ? std::string(d) : "";
-	#endif
+#else
+    const char* desktopEnv = std::getenv("XDG_CURRENT_DESKTOP") ?: std::getenv("DESKTOP_SESSION") ?: std::getenv("DE");
+    return desktopEnv ? std::string(desktopEnv) : "";
+#endif
 }
 
 std::string SystemInfo::GetShell() {
-	if(const char* shellEnv = std::getenv("SHELL")) {
-		shell = shellEnv;
-		size_t lastSlashIndex = shell.find_last_of('/');
-		return lastSlashIndex == std::string::npos ? shell : shell.erase(0, lastSlashIndex + 1);
-	}
-	return "NULL";
+    if(const char* shellEnv = std::getenv("SHELL")) {
+        shell = shellEnv;
+        size_t lastSlashIndex = shell.find_last_of('/');
+        return lastSlashIndex == std::string::npos ? shell : shell.erase(0, lastSlashIndex + 1);
+    }
+    return "NULL";
 }
 
 std::string SystemInfo::GetUser() {
@@ -345,4 +326,3 @@ std::string SystemInfo::GetPackagesByDistro() {
     }
     return "-1";
 }
-

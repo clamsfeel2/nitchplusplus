@@ -8,15 +8,16 @@
 #include <iostream>
 #include <sstream>
 
-struct Row {
-    bool        show;
-    std::string icon;
-    std::string label;
-    std::string value;
-    std::string color;
-};
+
 
 void Printer::Print() {
+    struct Row {
+        bool        show;
+        std::string icon;
+        std::string label;
+        std::string value;
+        std::string color;
+    };
     SystemInfo    si;
     Configuration cfg;
     Icons         icon;
@@ -24,10 +25,9 @@ void Printer::Print() {
     si.InitializeDistroID();
     si.Initialize(cfg.ParseConfigFile() == 1);
 
-    // Helper to repeat a UTF-8 string
-    auto repeat       =[](std::string_view s,int n) -> std::string { std::string o; for(; n--; ) o+=s; return o; };
+    auto repeatUTF8       =[](std::string_view s,int n) -> std::string { std::string o; for(; n--; ) o+=s; return o; };
     const int  width            = Configuration::s_width;
-    const std::string dashLine = repeat("─", width + 5);
+    const std::string dashLine = repeatUTF8("─", width + 5);
     bool anyPrinted             = false;
 
     if(Configuration::s_showAscii) std::cout << C::B_BLUE << si.s_logo << C::NC << "\n";
@@ -45,21 +45,17 @@ void Printer::Print() {
         { icon.s_showMemory,   icon.s_iconMemory,  "memory", si.memory,       C::YELLOW      }
     };
 
-    // Strip stray newlines
-    for(Row& r : rows)
-        if(!r.value.empty() && r.value.back() == '\n') r.value.pop_back();
+    for(Row& row : rows) if(!row.value.empty() && row.value.back() == '\n') row.value.pop_back();
 
-    // Helper for every row
-    auto printRow = [&](const Row& r) -> bool {
-        if(!r.show) return false;
-        auto padded = r.label + std::string(width - r.label.size(), ' ');
-        std::cout << "  │ " << r.color << r.icon << " " << C::NC << " " << padded << " │ " << r.color << r.value << C::NC << "\n";
+    auto printRow = [&](const Row& row) -> bool {
+        if(!row.show) return false;
+        auto padded = row.label + std::string(width - row.label.size(), ' ');
+        std::cout << "  │ " << row.color << row.icon << " " << C::NC << " " << padded << " │ " << row.color << row.value << C::NC << "\n";
         return true;
     };
 
     std::cout << "  ╭" << dashLine << "╮\n";
-    for(Row& r : rows)
-        anyPrinted |= printRow(r);
+    for(Row& row : rows) anyPrinted |= printRow(row);
 
     // colors
     if(icon.s_showColors) {
