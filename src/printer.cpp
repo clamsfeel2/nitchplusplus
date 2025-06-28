@@ -5,8 +5,8 @@
 #include "colors.hpp"
 #include <vector>
 #include <string>
-#include <iostream>
 #include <sstream>
+#include <print>
 
 void Printer::Print() {
     struct Row { bool show; std::string icon; std::string label; std::string value; std::string color; };
@@ -22,7 +22,7 @@ void Printer::Print() {
     const std::string dashLine      = repeatUTF8("─", width + 5);
     bool anyPrinted                 = false;
 
-    if(Configuration::s_showAscii) std::cout << C::B_BLUE << si.s_logo << C::NC << "\n";
+    if(Configuration::s_showAscii) std::println("{}{}{}", C::B_BLUE, si.s_logo, C::NC);
     if(icon.s_showNothing) return;
 
     std::vector<Row> rows = {
@@ -42,19 +42,20 @@ void Printer::Print() {
     auto printRow = [&](const Row& row) -> bool {
         if(!row.show) return false;
         auto padded = row.label + std::string(width - row.label.size(), ' ');
-        std::cout << "  │ " << row.color << row.icon << " " << C::NC << " " << padded << " │ " << row.color << row.value << C::NC << "\n";
+        std::println("  │ {}{} {} {} │ {}{}{}", row.color, row.icon, C::NC, padded, row.color, row.value, C::NC);
         return true;
     };
 
-    std::cout << "  ╭" << dashLine << "╮\n";
+    std::println("  ╭{}╮", dashLine);
+
     for(Row& row : rows) anyPrinted |= printRow(row);
 
     if(icon.s_showColors) {
-        if(anyPrinted) std::cout << "  ├" << dashLine << "┤\n";
+        if(anyPrinted) std::println("  ├{}┤", dashLine);
         std::string label = "colors";
-        std::cout << "  │ " << icon.s_iconColors << "  " << label << std::string(width - label.size(), ' ') << " │ " << PrintColors() << "\n";
+        std::println("  │ {}  {}{} │ {}", icon.s_iconColors, label, std::string(width - label.size(), ' '), PrintColors());
     }
-    std::cout << "  ╰" << dashLine << "╯\n";
+    std::println("  ╰{}╯", dashLine);
 }
 
 std::string Printer::PrintColors() {

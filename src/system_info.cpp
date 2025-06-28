@@ -6,6 +6,9 @@
 #include <sstream>
 #include <filesystem>
 #include <array>
+#include <vector>
+#include <string>
+
 #if defined(__APPLE__) && defined(__MACH__)
     #include <mach/mach.h>
     #include <sys/sysctl.h>

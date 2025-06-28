@@ -1,5 +1,5 @@
 #include <cstring>
-#include <iostream>
+#include <print>
 #include <cctype>
 #include <algorithm>
 #include "cli_processor.h"
@@ -12,7 +12,7 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
     auto to_lower = [](std::string& s) -> void { std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::tolower(c); }); };
     int opt;
 
-    while((opt = getopt_long(argc, argv, "nahw:cd:", long_options, nullptr)) != -1) {
+    while((opt = getopt_long(argc, argv, "navhw:cd:", long_options, nullptr)) != -1) {
         switch(opt) {
             case 'n':
                 Configuration::s_noNerdFonts = true;
@@ -21,7 +21,10 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
                 Configuration::s_showAscii = false;
                 break;
             case 'h':
-                std::cout << PrintHelp();
+                std::println("{}", PrintHelp());
+                return 0;
+            case 'v':
+                std::println("{}", PrintVersion());
                 return 0;
             case 'w': {
                 const int MIN_WIDTH = 6;
@@ -33,7 +36,7 @@ int CliProcessor::ProcessCliArgs(int argc, char* argv[]) {
                 break;
             }
             case 'c':
-                std::cout << "\033c";
+                std::println("\033c");
                 break;
             case 'd': {
                 if(!optarg) error("Missing distro name.");

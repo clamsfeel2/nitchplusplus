@@ -5,9 +5,7 @@
 #include "logos.h"
 #include <filesystem>
 #include <toml++/toml.hpp>
-#ifdef __linux__
-    #include <algorithm>
-#endif
+#include <algorithm>
 
 std::string Configuration::s_configFile     = "";
 std::string Configuration::s_tmpDistro      = "";
