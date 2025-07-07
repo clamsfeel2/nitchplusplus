@@ -6,7 +6,7 @@
 #include <sstream>
 #include <filesystem>
 #include <array>
-#include <vector>
+#include <array>
 #include <string>
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -216,7 +216,7 @@ std::string SystemInfo::GetKernel() {
 
 std::string SystemInfo::GetDesktopEnv() {
 #if defined(__APPLE__) && defined(__MACH__)
-    static const std::vector<std::string> wms = { "yabai", "amethyst", "loop" };
+    static const std::array<std::string, 3> wms = { "yabai", "amethyst", "loop" };
     for(const std::string& wm : wms) {
         std::string cmd = "pgrep -q " + wm + " 2>/dev/null";
         if(system(cmd.c_str()) == 0) return wm;

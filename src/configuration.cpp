@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <toml++/toml.hpp>
 #include <algorithm>
+#include <array>
 
 std::string Configuration::s_configFile     = "";
 std::string Configuration::s_tmpDistro      = "";
@@ -53,17 +54,17 @@ size_t Configuration::ParseConfigFile() {
     toml::table& mods = *modsPtr;
 
     struct Spec { const char* name; const char* defIcon; bool defShow; std::string* outIcon; bool* outShow; };
-    std::vector<Spec> specs = {
-        { "username", "", true,  &icon.s_iconUser,    &icon.s_showUsername },
-        { "hostname", "", true,  &icon.s_iconHname,   &icon.s_showHostname },
-        { "distro",   "󰻀", true,&icon.s_iconDistro,  &icon.s_showDistro     },
-        { "kernel",   "󰌢", true,  &icon.s_iconKernel,  &icon.s_showKernel   },
-        { "uptime",   "", true,  &icon.s_iconUptime,  &icon.s_showUptime   },
-        { "shell",    "", true,  &icon.s_iconShell,   &icon.s_showShell    },
-        { "dewm",     "", true, &icon.s_iconDeWm,    &icon.s_showDeWm      },
-        { "pkgs",     "󰏖", true,  &icon.s_iconPkgs,    &icon.s_showPkgs     },
-        { "memory",   "󰍛", true,  &icon.s_iconMemory,  &icon.s_showMemory   }
-    };
+    std::array<Spec,9> specs = {{
+        {"username", "",   true,  &icon.s_iconUser,    &icon.s_showUsername},
+        {"hostname", "",   true,  &icon.s_iconHname,   &icon.s_showHostname},
+        {"distro",   "󰻀",   true,  &icon.s_iconDistro,  &icon.s_showDistro  },
+        {"kernel",   "󰌢",   true,  &icon.s_iconKernel,  &icon.s_showKernel  },
+        {"uptime",   "",   true,  &icon.s_iconUptime,  &icon.s_showUptime  },
+        {"shell",    "",   true,  &icon.s_iconShell,   &icon.s_showShell   },
+        {"dewm",     "",   true,  &icon.s_iconDeWm,    &icon.s_showDeWm    },
+        {"pkgs",     "󰏖",   true,  &icon.s_iconPkgs,    &icon.s_showPkgs    },
+        {"memory",   "󰍛",   true,  &icon.s_iconMemory,  &icon.s_showMemory  }
+    }};
 
     auto distroFallback = [&]() -> std::string {
         auto it = Icons::s_distroIconMap.find(SystemInfo::s_distroID);
@@ -74,7 +75,6 @@ size_t Configuration::ParseConfigFile() {
         if(toml::array* arr = mods.at(s.name).as_array()) {
             // Pull the raw first element (may be "")
             std::string raw = arr->size() > 0 ? arr->at(0).value<std::string>().value_or("") : "";
-
             if(std::string(s.name) == "distro") {
                 // If distro use lambda to get icon if non-empty use what is in config
                 *s.outIcon = raw.empty() ? distroFallback() : raw;
@@ -82,10 +82,8 @@ size_t Configuration::ParseConfigFile() {
                 // If empty use fallback if not use what is in config
                 *s.outIcon = raw.empty() ? s.defIcon : raw;
             }
-            // Second element is always the show flag
             *s.outShow = arr->size() > 1 ? arr->at(1).value<bool>().value_or(s.defShow) : s.defShow;
         } else {
-            // Missing or not an array
             *s.outIcon = s.defIcon;
             *s.outShow = s.defShow;
         }
