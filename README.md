@@ -144,7 +144,7 @@ Padding adjustment for each row/column is not currently supported, making this f
 
 Output of `nitch++ --help`
 
-```sh
+```txt
 -a, --noascii
      run nitch++ without displaying ascii art.
 
