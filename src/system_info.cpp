@@ -259,8 +259,7 @@ std::string SystemInfo::GetPackagesByDistro() {
         { "slackware",   "/var/lib/rpm"          },
         { "opensuse",    "/var/lib/zypp/db"      },
         { "gentoo",      "/var/db/pkg"           },
-        { "flatpak",     "/var/lib/flatpak/app"  },
-        { "void",        "/var/db/xbps"          }
+        { "flatpak",     "/var/lib/flatpak/app"  }
     };
 
     auto countSubDirs = [&](const std::string& path) -> int {
@@ -306,5 +305,11 @@ std::string SystemInfo::GetPackagesByDistro() {
 
         return out.str();
     }
+
+    // Void Linux
+    if (s_distroID == "void") {
+        return Exec("xbps-query -l 2>/dev/null | wc -l");
+    }
+
     return "-1";
 }
