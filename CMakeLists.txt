@@ -33,12 +33,18 @@ target_include_directories(${PROJECT_NAME} PRIVATE src)
 # Link libraries to the release executable
 target_link_libraries(${PROJECT_NAME} PRIVATE tomlplusplus::tomlplusplus)
 
-# Create config dir and copy ascii-art.txt and example_config.toml to $HOME/.config/nitch++/.ascii.txt and $HOME/.config/nitch++/config.toml
+# Create config dir and copy ascii-art.txt and example_config.toml to $HOME/.config/nitch++/.ascii.txt and $HOME/.config/nitch++/config.toml if they don't already exist
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/.config/nitch++/"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/.assets/ascii.txt" "$ENV{HOME}/.config/nitch++/.ascii.txt"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/config/example_config.toml" "$ENV{HOME}/.config/nitch++/config.toml"
+    COMMAND ${CMAKE_COMMAND}
+            -DDEST="$ENV{HOME}/.config/nitch++/.ascii.txt"
+            -DSRC="${CMAKE_SOURCE_DIR}/.assets/ascii.txt"
+            -P "${CMAKE_SOURCE_DIR}/cmake/copy_if_missing.cmake"
+    COMMAND ${CMAKE_COMMAND}
+            -DDEST="$ENV{HOME}/.config/nitch++/config.toml"
+            -DSRC="${CMAKE_SOURCE_DIR}/config/example_config.toml"
+            -P "${CMAKE_SOURCE_DIR}/cmake/copy_if_missing.cmake"
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION /usr/bin)
