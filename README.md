@@ -163,4 +163,4 @@ Output of `nitch++ --help`
 
 ### Configuration
 
-In order to use the config file, put the [example config file](./config/example_config.toml) into the config directory. By default `nitch++` will use `$XDG_CONFIG_HOME/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml`
+By default `nitch++` will use `$XDG_CONFIG_HOME/nitch++/config.toml` as the path to your config file. However, you are able to change the path by setting `NITCHPP_CONFIG_FILE` environment variable to a path ending in `config.toml`
