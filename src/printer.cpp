@@ -61,12 +61,9 @@ void Printer::Print() {
 std::string Printer::PrintColors() {
     Icons icon;
     std::ostringstream oss;
-    // Use module colors from config or default
-    const std::string defaults[] = { C::NC, C::RED, C::YELLOW, C::G, C::BRIGHT_BLUE, C::BLUE, C::PURPLE };
-    for(int i = 0; i < 7; i++) {
-        const std::string& col = (i > 0 && !Configuration::s_colors[i-1].empty()) ? Configuration::s_colors[i-1] : defaults[i];
-        oss << col << icon.s_iconColorSwatches << ' ';
-    }
+    oss << C::NC << icon.s_iconColorSwatches << ' ';
+    for(int i = 0; i < 7; i++)
+        oss << Configuration::s_colors[i] << icon.s_iconColorSwatches << ' ';
     oss << C::NC;
     return oss.str();
 }
