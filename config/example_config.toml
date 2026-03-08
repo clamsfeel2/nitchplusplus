@@ -1,40 +1,55 @@
 [modules]
 # Change these to change the icon that shows next to each module.
 # Anything more than 1 character long currently breaks output.
+#
+# Format: [ "icon", "color", show ]
+#
+# The middle value sets the module color. Accepts hex codes or any of these named colors:
+# red, bold red
+# yellow, bright yellow, bold yellow
+# green, bright green, bold green
+# blue, bright blue, bold blue, bold bright blue
+# purple, bold purple
+#
+# Invalid or empty color values will fall back to the default color.
+#
 # The boolean value is telling nitch++ whether or not to show that module.
-username = [ "", true ]
-hostname = [ "", true ]
-distro = [ "󰻀", true ]
-kernel = [ "󰌢", true ]
-uptime = [ "", true ]
-shell = [ "", true ]
-dewm = [ "", true ]
-pkgs = [ "󰏖", true ]
-memory = [ "󰍛", true ]
-colors = [ "", "", true ]     # The first icon changes the color icon. The second changes the color swatch icon.
+username = ["", "", true]
+hostname = ["", "", true]
+distro = ["󰻀", "", true]
+kernel = ["󰌢", "", true]
+uptime = ["", "", true]
+shell = ["", "", true]
+dewm = ["", "", true]
+pkgs = ["󰏖", "", true]
+memory = ["󰍛", "", true]
+colors = [
+  "",
+  "",
+  true,
+] # The first icon changes the color icon. The second changes the color swatch icon.
 
 [general]
-show_ascii = true               # Setting this to false will disable ascii in output.
-width = 6                       # Change the width of the box. Cannot modify padding of each column/row, yet... So this is more of a gimmick if anything right now ha.
-                                # This value MUST be greater than 5. 6 is default.
-ascii_distro = ""               # Choose which distro's ascii image to display | either comment this line out or set it to empty string to show system ascii.
+show_ascii = true # Setting this to false will disable ascii in output.
+width = 6         # Change the width of the box. Cannot modify padding of each column/row, yet... So this is more of a gimmick if anything right now ha. Value MUST be greater than 5 and 6 is default.
+ascii_distro = "" # Choose which distro's ascii image to display | either comment this line out or set it to empty string to show system ascii.
 # Possible distros:
- # default (shows nitch++ image)
- # arch
- # debian
- # ubuntu
- # fedora
- # mint
- # zorin
- # popos
- # manjaro
- # opensuse
- # slackware
- # centos
- # redHat
- # gentoo
- # endeavouros
- # artix
- # void
- # nixos
- # macos
+# default (shows nitch++ image)
+# arch
+# debian
+# ubuntu
+# fedora
+# mint
+# zorin
+# popos
+# manjaro
+# opensuse
+# slackware
+# centos
+# redHat
+# gentoo
+# endeavouros
+# artix
+# void
+# nixos
+# macos

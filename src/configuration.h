@@ -2,7 +2,8 @@
 #include <string>
 
 struct Configuration {
-	static std::string s_configFile, s_tmpDistro, s_filename;
+	static std::string s_configFile, s_tmpDistro, s_filename, s_asciiColor;
+    static std::string s_colors[9];
 	static bool s_showAscii, s_distroSuppliedFromCli, s_widthSupplied, s_noNerdFonts;
 	static int s_width;
 	size_t ParseConfigFile();
