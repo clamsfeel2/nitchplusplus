@@ -32,7 +32,7 @@ colors = [
 [general]
 show_ascii = true # Setting this to false will disable ascii in output.
 width = 6         # Change the width of the box. Cannot modify padding of each column/row, yet... So this is more of a gimmick if anything right now ha. Value MUST be greater than 5 and 6 is default.
-ascii_color = ""  # Change the color of the ascii logo
+ascii_color = ""  # Change the color of the ascii logo (same color rules as above apply)
 ascii_distro = "" # Choose which distro's ascii image to display | either comment this line out or set it to empty string to show system ascii.
 # Possible distros:
 # default (shows nitch++ image)
