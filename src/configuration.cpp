@@ -12,7 +12,7 @@ std::string Configuration::s_configFile     = "";
 std::string Configuration::s_tmpDistro      = "";
 int Configuration::s_width                  = 6;
 std::string Configuration::s_asciiColor     = "";
-std::string Configuration::s_colors[9]      = {};
+std::string Configuration::s_colors[10]      = {};
 bool Configuration::s_showAscii             = true;
 bool Configuration::s_widthSupplied         = false;
 bool Configuration::s_noNerdFonts           = false;
@@ -95,7 +95,7 @@ size_t Configuration::ParseConfigFile() {
     toml::table& mods = *modsPtr;
 
     struct Spec { const char* name; const char* defIcon; const char* defColor; bool defShow; std::string* outIcon; bool* outShow; };
-    std::array<Spec,9> specs = {{
+    std::array<Spec,10> specs = {{
         {"username", "", C::RED,           true,  &icon.s_iconUser,    &icon.s_showUsername},
         {"hostname", "", C::YELLOW,        true,  &icon.s_iconHname,   &icon.s_showHostname},
         {"distro",   "󰻀", C::G,             true,  &icon.s_iconDistro,  &icon.s_showDistro  },
@@ -104,7 +104,8 @@ size_t Configuration::ParseConfigFile() {
         {"shell",    "", C::PURPLE,        true,  &icon.s_iconShell,   &icon.s_showShell   },
         {"dewm",     "", C::G,             true,  &icon.s_iconDeWm,    &icon.s_showDeWm    },
         {"pkgs",     "󰏖", C::RED,           true,  &icon.s_iconPkgs,    &icon.s_showPkgs    },
-        {"memory",   "󰍛", C::YELLOW,        true,  &icon.s_iconMemory,  &icon.s_showMemory  }
+        {"memory",   "󰍛", C::YELLOW,        true,  &icon.s_iconMemory,  &icon.s_showMemory  },
+            {"colors",   "",  C::NC,           true,  &icon.s_iconColors,  &icon.s_showColors  }
     }};
 
     auto distroFallback = [&]() -> std::string {
@@ -112,7 +113,7 @@ size_t Configuration::ParseConfigFile() {
         return (it != Icons::s_distroIconMap.end()) ? it->second : "󰻀";
     };
 
-    for(int i = 0; i < 9; i++) {
+    for(size_t i = 0; i < specs.size(); i++) {
         Spec& s = specs[i];
         toml::array* arr = mods.at(s.name).as_array();
         if(!arr || arr->size() != 3) throw std::invalid_argument(std::string("modules.") + s.name + " must be [\"icon\", \"color\", true/false]");
@@ -123,8 +124,6 @@ size_t Configuration::ParseConfigFile() {
         *s.outShow = arr->at(2).value<bool>().value_or(s.defShow);
     }
 
-    toml::array* arr = mods.at("colors").as_array();
-    if(!arr || arr->size() < 3) throw std::invalid_argument("modules.colors must be [icon, swatch, show]");
 
     icon.s_showNothing = std::all_of(specs.begin(), specs.end(), [&](auto &s){ return !*s.outShow; }) && !icon.s_showColors;
 
@@ -134,8 +133,12 @@ size_t Configuration::ParseConfigFile() {
         if(Configuration::s_width < 6) throw std::invalid_argument(C::B_RED + std::string("ERROR: ") + C::NC + "width in config must be >= 5");
     }
 
+    // if(Configuration::s_noNerdFonts) {
+    //     for(Spec& s : specs) *s.outIcon = (std::string(s.name) == "colors" ? "~" : ">");
+    //     icon.s_iconColorSwatches = "■";
+    // }
     if(Configuration::s_noNerdFonts) {
-        for(Spec& s : specs) *s.outIcon = (std::string(s.name) == "colors" ? "~" : ">");
+        for(Spec& s : specs) *s.outIcon = ">";
         icon.s_iconColorSwatches = "■";
     }
 
